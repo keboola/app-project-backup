@@ -15,12 +15,12 @@
     },
     "autoload": {
         "psr-4": {
-            "MyComponent\\": "src/"
+            "Keboola\\App\\ProjectBackup\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MyComponent\\Tests\\": "tests/phpunit/"
+            "Keboola\\App\\ProjectBackup\\Tests\\": "tests/phpunit/"
         }
     },
     "scripts": {

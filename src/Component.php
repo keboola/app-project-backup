@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MyComponent;
+namespace Keboola\App\ProjectBackup;
 
 use Aws\S3\S3Client;
 use Keboola\Component\BaseComponent;
