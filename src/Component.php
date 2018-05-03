@@ -65,6 +65,8 @@ class Component extends BaseComponent
 
     public function handleCredentials(): array
     {
+        $imageParams = $this->getConfig()->getImageParameters();
+
         $sapi = $this->initSapi();
         $sts = $this->initSTS();
 
@@ -104,6 +106,7 @@ class Component extends BaseComponent
 
         return [
           'backupId' => $backupId,
+          'region' => $imageParams['region'],
           'credentials' => $federationToken['Credentials'],
         ];
     }
