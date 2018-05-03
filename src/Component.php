@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\App\ProjectBackup;
 
 use Aws\S3\S3Client;
+use Aws\Sts\StsClient;
 use Keboola\Component\BaseComponent;
 use Keboola\ProjectBackup\S3Backup;
 use Keboola\StorageApi\Client AS StorageApi;
@@ -48,24 +49,73 @@ class Component extends BaseComponent
         ]);
     }
 
+    private function initSTS(): StsClient
+    {
+        $imageParams = $this->getConfig()->getImageParameters();
+
+        return new StsClient([
+            'version' => 'latest',
+            'region' => $imageParams['region'],
+            'credentials' => [
+                'key' => $imageParams['access_key_id'],
+                'secret' => $imageParams['#secret_access_key'],
+            ]
+        ]);
+    }
+
     public function handleCredentials(): array
     {
-        $backupId = $this->initSapi()->generateId();
+        $sapi = $this->initSapi();
+        $sts = $this->initSTS();
+
+        $backupId = $sapi->generateId();
+
+        $imageParams = $this->getConfig()->getImageParameters();
+
+        $path = $this->generateBackupPath($backupId, $sapi);
+
+        $policy = [
+            'Statement' => [
+                [
+                    'Effect' =>'Allow',
+                    'Action' => 's3:GetObject',
+                    'Resource' => ['arn:aws:s3:::' . $imageParams['#bucket'] . '/' . $path . '/*'],
+                ],
+
+                // List bucket is required for Redshift COPY command even if only one file is loaded
+                [
+                    'Effect' => 'Allow',
+                    'Action' => 's3:ListBucket',
+                    'Resource' => ['arn:aws:s3:::' . $imageParams['#bucket']],
+                    'Condition' => [
+                        'StringLike' => [
+                            's3:prefix' => [$path . '/*'],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $federationToken = $sts->getFederationToken([
+            'DurationSeconds' => 24 * 3600,
+            'Name' => 'GetProjectBackupFile',
+            'Policy' => json_encode($policy)
+        ]);
 
         return [
           'backupId' => $backupId,
+          'credentials' => $federationToken['Credentials'],
         ];
     }
 
-    private function generateBackupPath(StorageApi $client): string
+    private function generateBackupPath($backupId, StorageApi $client): string
     {
         $token = $client->verifyToken();
 
         $region = $token['owner']['region'];
         $projectId = $token['owner']['id'];
-        $actionParams = $this->getConfig()->getParameters();
 
-        return sprintf('/data-takeout/%s/%s/%s', $region, $projectId, $actionParams['backupId']);
+        return sprintf('data-takeout/%s/%s/%s', $region, $projectId, $backupId);
     }
 
     public function handleRun(): void
@@ -73,6 +123,7 @@ class Component extends BaseComponent
         $sapi = $this->initSapi();
 
         $imageParams = $this->getConfig()->getImageParameters();
+        $actionParams = $this->getConfig()->getParameters();
 
         //@FIXME RUN MUSI VALIDOVAT env variables
         $logger = new Logger(getenv('KBC_COMPONENTID'));
@@ -80,7 +131,7 @@ class Component extends BaseComponent
         $backup = new S3Backup($sapi, $this->initS3(), $logger);
 
         $bucket = $imageParams['#bucket'];
-        $path = $this->generateBackupPath($sapi);
+        $path = $this->generateBackupPath($actionParams['backupId'], $sapi);
 
         $tableIds = $backup->backupTablesMetadata($bucket, $path);
         $tablesCount = count($tableIds);
