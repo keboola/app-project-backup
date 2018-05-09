@@ -2,7 +2,7 @@
     "require": {
         "PHP": "^7.1",
         "keboola/php-component": "^3.0",
-        "keboola/kbc-project-backup": "dev-master"
+        "keboola/kbc-project-backup": "^0.0.1"
     },
     "require-dev": {
         "jakub-onderka/php-parallel-lint": "^1.0",
