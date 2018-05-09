@@ -9,6 +9,8 @@ use Aws\Sts\StsClient;
 use Keboola\Component\BaseComponent;
 use Keboola\ProjectBackup\S3Backup;
 use Keboola\StorageApi\Client as StorageApi;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
 class Component extends BaseComponent
@@ -139,10 +141,8 @@ class Component extends BaseComponent
         $imageParams = $this->getConfig()->getImageParameters();
         $actionParams = $this->getConfig()->getParameters();
 
-        //@FIXME RUN MUSI VALIDOVAT env variables
-        $logger = new Logger(getenv('KBC_COMPONENTID'));
-
-        $backup = new S3Backup($sapi, $this->initS3(), $logger);
+        $logger = $this->initLogger();
+        $backup = new S3Backup($sapi, $this->initS3(), $this->initLogger());
 
         $bucket = $imageParams['#bucket'];
         $path = $this->generateBackupPath((int) $actionParams['backupId'], $sapi);
@@ -168,5 +168,26 @@ class Component extends BaseComponent
     protected function getConfigDefinitionClass(): string
     {
         return ConfigDefinition::class;
+    }
+
+    private function initLogger(): Logger
+    {
+        $formatter = new LineFormatter("%message%\n");
+
+        $errorHandler = new StreamHandler('php://stderr', Logger::WARNING, false);
+        $errorHandler->setFormatter($formatter);
+
+        $handler = new StreamHandler('php://stdout', Logger::INFO);
+        $handler->setFormatter($formatter);
+
+        $logger = new Logger(
+            getenv('KBC_COMPONENTID')?: 'project-backup',
+            [
+                $errorHandler,
+                $handler,
+            ]
+        );
+
+        return $logger;
     }
 }
