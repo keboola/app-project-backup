@@ -1,4 +1,6 @@
 {
+    "name": "keboola/app-project-backup",
+    "license": "MIT",
     "require": {
         "PHP": "^7.1",
         "keboola/php-component": "^3.0",
