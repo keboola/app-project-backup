@@ -91,6 +91,17 @@ class FunctionalTest extends TestCase
         ]);
 
         try {
+            $readS3Client->putObject([
+                'Bucket' => $uriParts['bucket'],
+                'Key' => $uriParts['key'] . 'sample.txt',
+                'Body' => 'Hello world',
+            ]);
+            $this->fail('Adding files to backup folder should produce error');
+        } catch (S3Exception $e) {
+            $this->assertEquals('AccessDenied', $e->getAwsErrorCode());
+        }
+
+        try {
             $readS3Client->getObject([
                 'Bucket' => $uriParts['bucket'],
                 'Key' => str_replace($outputData['backupId'], '123', $uriParts['key']),
