@@ -13,6 +13,8 @@ use Monolog\Logger;
 
 class Component extends BaseComponent
 {
+    public const FEDERATION_TOKEN_EXPIRATION_HOURS = 24;
+
     public function run(): void
     {
         $action = $this->getConfig()->getAction();
@@ -72,9 +74,12 @@ class Component extends BaseComponent
 
         $backupId = $sapi->generateId();
 
-        $imageParams = $this->getConfig()->getImageParameters();
-
         $path = $this->generateBackupPath($backupId, $sapi);
+
+        $result = $this->initS3()->putObject([
+            'Bucket' => $imageParams['#bucket'],
+            'Key' => $path . '/',
+        ]);
 
         $policy = [
             'Statement' => [
@@ -99,15 +104,21 @@ class Component extends BaseComponent
         ];
 
         $federationToken = $sts->getFederationToken([
-            'DurationSeconds' => 24 * 3600,
+            'DurationSeconds' => self::FEDERATION_TOKEN_EXPIRATION_HOURS * 3600,
             'Name' => 'GetProjectBackupFile',
             'Policy' => json_encode($policy)
         ]);
 
         return [
           'backupId' => $backupId,
+          'backupUri' => $result['ObjectURL'],
           'region' => $imageParams['region'],
-          'credentials' => $federationToken['Credentials'],
+          'credentials' => [
+              'accessKeyId' => $federationToken['Credentials']['AccessKeyId'],
+              'secretAccessKey' => $federationToken['Credentials']['SecretAccessKey'],
+              'sessionToken' => $federationToken['Credentials']['SessionToken'],
+              'expiration' => $federationToken['Credentials']['Expiration'],
+          ],
         ];
     }
 
@@ -136,12 +147,14 @@ class Component extends BaseComponent
         $bucket = $imageParams['#bucket'];
         $path = $this->generateBackupPath($actionParams['backupId'], $sapi);
 
-        $tableIds = $backup->backupTablesMetadata($bucket, $path);
-        $tablesCount = count($tableIds);
+        $backup->backupTablesMetadata($bucket, $path);
 
-        foreach ($tableIds as $i => $tableId) {
+        $tables = $sapi->listTables(null);
+        $tablesCount = count($tables);
+
+        foreach ($tables as $i => $table) {
             $logger->info(sprintf('Table %d/%d', $i + 1, $tablesCount));
-            $backup->backupTable($tableId, $bucket, $path);
+            $backup->backupTable($table['id'], $bucket, $path);
         }
 
         $backup->backupConfigs($bucket, $path, 2);
