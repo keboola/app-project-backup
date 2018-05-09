@@ -57,6 +57,7 @@ class ConfigDefinition extends BaseConfigDefinition
         $builder = new TreeBuilder();
         /** @var ArrayNodeDefinition $parametersNode */
         $parametersNode = $builder->root('image_parameters');
+        $parametersNode->isRequired();
         $parametersNode->ignoreExtraKeys(false);
 
         // @formatter:off
