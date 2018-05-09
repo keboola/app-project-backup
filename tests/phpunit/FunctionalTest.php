@@ -8,6 +8,8 @@ use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Aws\S3\S3UriParser;
 use Keboola\StorageApi\Client as StorageApi;
+use Keboola\StorageApi\Components;
+use Keboola\StorageApi\Options\Components\Configuration;
 use Keboola\Temp\Temp;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
@@ -36,6 +38,17 @@ class FunctionalTest extends TestCase
             'url' => getenv('TEST_STORAGE_API_URL'),
             'token' => getenv('TEST_STORAGE_API_TOKEN'),
         ]);
+
+        $this->cleanupKbcProject();
+
+        $component = new Components($this->sapiClient);
+
+        $config = new Configuration();
+        $config->setComponentId('transformation');
+        $config->setDescription('Test Configuration');
+        $config->setConfigurationId('sapi-php-test');
+        $config->setName('test-configuration');
+        $component->addConfiguration($config);
     }
 
     public function testCreateCredentials(): void
@@ -85,11 +98,13 @@ class FunctionalTest extends TestCase
             ],
         ]);
 
+        // read permissions
         $readS3Client->getObject([
             'Bucket' => $uriParts['bucket'],
             'Key' => $uriParts['key'],
         ]);
 
+        // write permissions
         try {
             $readS3Client->putObject([
                 'Bucket' => $uriParts['bucket'],
@@ -101,6 +116,7 @@ class FunctionalTest extends TestCase
             $this->assertEquals('AccessDenied', $e->getAwsErrorCode());
         }
 
+        // other backup
         try {
             $readS3Client->getObject([
                 'Bucket' => $uriParts['bucket'],
@@ -110,6 +126,86 @@ class FunctionalTest extends TestCase
             $this->fail('Getting other backup should produce error');
         } catch (S3Exception $e) {
             $this->assertEquals('AccessDenied', $e->getAwsErrorCode());
+        }
+    }
+
+    public function testSuccessfulRun()
+    {
+        $fileSystem = new Filesystem();
+
+        // create backupId
+        $fileSystem->dumpFile(
+            $this->temp->getTmpFolder() . '/config.json',
+            \json_encode([
+                'action' => 'generate-read-credentials',
+                'image_parameters' => [
+                    'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
+                    '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
+                    'region' => getenv('TEST_AWS_REGION'),
+                    '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
+                ],
+            ])
+        );
+
+        $runProcess = $this->createTestProcess();
+        $runProcess->mustRun();
+
+        $this->assertEmpty($runProcess->getErrorOutput());
+
+        $output = $runProcess->getOutput();
+        $outputData = \json_decode($output, true);
+
+        $this->assertArrayHasKey('backupId', $outputData);
+
+        // run backup
+        $fileSystem->dumpFile(
+            $this->temp->getTmpFolder() . '/config.json',
+            \json_encode([
+                'action' => 'run',
+                'parameters' => [
+                    'backupId' => $outputData['backupId'],
+                ],
+                'image_parameters' => [
+                    'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
+                    '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
+                    'region' => getenv('TEST_AWS_REGION'),
+                    '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
+                ],
+            ])
+        );
+
+        $runProcess = $this->createTestProcess();
+        $runProcess->mustRun();
+
+        $this->assertEmpty($runProcess->getErrorOutput());
+
+        $output = $runProcess->getOutput();
+        $this->assertContains('Exporting buckets', $output);
+        $this->assertContains('Exporting tables', $output);
+        $this->assertContains('Exporting configurations', $output);
+    }
+
+    private function cleanupKbcProject(): void
+    {
+        $components = new Components($this->sapiClient);
+        foreach ($components->listComponents() as $component) {
+            foreach ($component['configurations'] as $configuration) {
+                $components->deleteConfiguration($component['id'], $configuration['id']);
+
+                // delete configuration from trash
+                $components->deleteConfiguration($component['id'], $configuration['id']);
+            }
+        }
+
+        // drop linked buckets
+        foreach ($this->sapiClient->listBuckets() as $bucket) {
+            if (isset($bucket['sourceBucket'])) {
+                $this->sapiClient->dropBucket($bucket["id"], ["force" => true]);
+            }
+        }
+
+        foreach ($this->sapiClient->listBuckets() as $bucket) {
+            $this->sapiClient->dropBucket($bucket["id"], ["force" => true]);
         }
     }
 
