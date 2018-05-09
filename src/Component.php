@@ -8,7 +8,7 @@ use Aws\S3\S3Client;
 use Aws\Sts\StsClient;
 use Keboola\Component\BaseComponent;
 use Keboola\ProjectBackup\S3Backup;
-use Keboola\StorageApi\Client AS StorageApi;
+use Keboola\StorageApi\Client as StorageApi;
 use Monolog\Logger;
 
 class Component extends BaseComponent
@@ -47,7 +47,7 @@ class Component extends BaseComponent
             'credentials' => [
                 'key' => $imageParams['access_key_id'],
                 'secret' => $imageParams['#secret_access_key'],
-            ]
+            ],
         ]);
     }
 
@@ -61,7 +61,7 @@ class Component extends BaseComponent
             'credentials' => [
                 'key' => $imageParams['access_key_id'],
                 'secret' => $imageParams['#secret_access_key'],
-            ]
+            ],
         ]);
     }
 
@@ -74,7 +74,7 @@ class Component extends BaseComponent
 
         $backupId = $sapi->generateId();
 
-        $path = $this->generateBackupPath($backupId, $sapi);
+        $path = $this->generateBackupPath((int) $backupId, $sapi);
 
         $result = $this->initS3()->putObject([
             'Bucket' => $imageParams['#bucket'],
@@ -106,7 +106,7 @@ class Component extends BaseComponent
         $federationToken = $sts->getFederationToken([
             'DurationSeconds' => self::FEDERATION_TOKEN_EXPIRATION_HOURS * 3600,
             'Name' => 'GetProjectBackupFile',
-            'Policy' => json_encode($policy)
+            'Policy' => json_encode($policy),
         ]);
 
         return [
@@ -122,7 +122,7 @@ class Component extends BaseComponent
         ];
     }
 
-    private function generateBackupPath($backupId, StorageApi $client): string
+    private function generateBackupPath(int $backupId, StorageApi $client): string
     {
         $token = $client->verifyToken();
 
@@ -145,7 +145,7 @@ class Component extends BaseComponent
         $backup = new S3Backup($sapi, $this->initS3(), $logger);
 
         $bucket = $imageParams['#bucket'];
-        $path = $this->generateBackupPath($actionParams['backupId'], $sapi);
+        $path = $this->generateBackupPath((int) $actionParams['backupId'], $sapi);
 
         $backup->backupTablesMetadata($bucket, $path);
 
@@ -157,7 +157,7 @@ class Component extends BaseComponent
             $backup->backupTable($table['id'], $bucket, $path);
         }
 
-        $backup->backupConfigs($bucket, $path, 2);
+        $backup->backupConfigs($bucket, $path, true);
     }
 
     protected function getConfigClass(): string
