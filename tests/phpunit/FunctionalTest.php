@@ -129,7 +129,7 @@ class FunctionalTest extends TestCase
         }
     }
 
-    public function testSuccessfulRun()
+    public function testSuccessfulRun(): void
     {
         $fileSystem = new Filesystem();
 

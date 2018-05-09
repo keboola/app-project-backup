@@ -76,7 +76,7 @@ class Component extends BaseComponent
 
         $backupId = $sapi->generateId();
 
-        $path = $this->generateBackupPath((int) $backupId, $sapi);
+        $path = $this->generateBackupPath($backupId, $sapi);
 
         $result = $this->initS3()->putObject([
             'Bucket' => $imageParams['#bucket'],
