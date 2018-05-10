@@ -130,9 +130,14 @@ class Component extends BaseComponent
     private function generateBackupPath(int $backupId, StorageApi $client): string
     {
         $token = $client->verifyToken();
+        $imageParams = $this->getConfig()->getImageParameters();
 
         $region = $token['owner']['region'];
         $projectId = $token['owner']['id'];
+
+        if ($region !== $imageParams['region']) {
+            throw new \Exception(sprintf('Project with ID "%s" is not located in %s region', $projectId, $imageParams['region']));
+        }
 
         return sprintf('data-takeout/%s/%s/%s/', $region, $projectId, $backupId);
     }
