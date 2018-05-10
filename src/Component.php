@@ -91,7 +91,7 @@ class Component extends BaseComponent
                 [
                     'Effect' =>'Allow',
                     'Action' => 's3:GetObject',
-                    'Resource' => ['arn:aws:s3:::' . $imageParams['#bucket'] . '/' . $path . '/*'],
+                    'Resource' => ['arn:aws:s3:::' . $imageParams['#bucket'] . '/' . $path . '*'],
                 ],
 
                 // List bucket is required for Redshift COPY command even if only one file is loaded
@@ -101,7 +101,7 @@ class Component extends BaseComponent
                     'Resource' => ['arn:aws:s3:::' . $imageParams['#bucket']],
                     'Condition' => [
                         'StringLike' => [
-                            's3:prefix' => [$path . '/*'],
+                            's3:prefix' => [$path . '*'],
                         ],
                     ],
                 ],
