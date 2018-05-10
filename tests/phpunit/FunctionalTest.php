@@ -185,6 +185,35 @@ class FunctionalTest extends TestCase
         $this->assertContains('Exporting configurations', $output);
     }
 
+    public function testBadBackupIdRun(): void
+    {
+        $fileSystem = new Filesystem();
+        $fileSystem->dumpFile(
+            $this->temp->getTmpFolder() . '/config.json',
+            \json_encode([
+                'action' => 'run',
+                'parameters' => [
+                    'backupId' => $this->sapiClient->generateId(),
+                ],
+                'image_parameters' => [
+                    'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
+                    '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
+                    'region' => getenv('TEST_AWS_REGION'),
+                    '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
+                ],
+            ])
+        );
+
+        $runProcess = $this->createTestProcess();
+        $runProcess->run();
+
+        $this->assertEquals(1, $runProcess->getExitCode());
+
+        $output = $runProcess->getOutput();
+        $this->assertNotEmpty($output);
+        $this->assertContains('was not initialized for this KBC project', $output);
+    }
+
     private function cleanupKbcProject(): void
     {
         $components = new Components($this->sapiClient);

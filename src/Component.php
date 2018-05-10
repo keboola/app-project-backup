@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Keboola\App\ProjectBackup;
 
+use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Aws\Sts\StsClient;
 use Keboola\Component\BaseComponent;
+use Keboola\Component\UserException;
 use Keboola\ProjectBackup\S3Backup;
 use Keboola\StorageApi\Client as StorageApi;
 use Monolog\Formatter\LineFormatter;
@@ -81,7 +83,7 @@ class Component extends BaseComponent
 
         $result = $this->initS3()->putObject([
             'Bucket' => $imageParams['#bucket'],
-            'Key' => $path . '/',
+            'Key' => $path,
         ]);
 
         $policy = [
@@ -132,21 +134,36 @@ class Component extends BaseComponent
         $region = $token['owner']['region'];
         $projectId = $token['owner']['id'];
 
-        return sprintf('data-takeout/%s/%s/%s', $region, $projectId, $backupId);
+        return sprintf('data-takeout/%s/%s/%s/', $region, $projectId, $backupId);
     }
 
     public function handleRun(): void
     {
         $sapi = $this->initSapi();
+        $s3Client = $this->initS3();
 
         $imageParams = $this->getConfig()->getImageParameters();
         $actionParams = $this->getConfig()->getParameters();
 
-        $logger = $this->initLogger();
-        $backup = new S3Backup($sapi, $this->initS3(), $this->initLogger());
-
         $bucket = $imageParams['#bucket'];
         $path = $this->generateBackupPath((int) $actionParams['backupId'], $sapi);
+
+        // check if backup folder was initialized
+        try {
+            $s3Client->getObject([
+                'Bucket' => $bucket,
+                'Key' => $path,
+            ]);
+        } catch (S3Exception $e) {
+            if ($e->getAwsErrorCode() === 'NoSuchKey') {
+                throw new UserException(sprintf('Backup with ID "%s" was not initialized for this KBC project', $actionParams['backupId']));
+            } else {
+                throw $e;
+            }
+        }
+
+        $logger = $this->initLogger();
+        $backup = new S3Backup($sapi, $s3Client, $this->initLogger());
 
         $backup->backupTablesMetadata($bucket, $path);
 
