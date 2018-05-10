@@ -6,7 +6,7 @@ namespace Keboola\App\ProjectBackup\Tests;
 
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
-use Aws\S3\S3UriParser;
+use Keboola\App\ProjectBackup\S3UriParser;
 use Keboola\StorageApi\Client as StorageApi;
 use Keboola\StorageApi\Components;
 use Keboola\StorageApi\Options\Components\Configuration;
