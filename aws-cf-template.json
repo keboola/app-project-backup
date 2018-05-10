@@ -62,6 +62,29 @@
                 }
               ]
             }
+          },
+          {
+            "PolicyName": "STSFederationToken",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Action": [
+                    "sts:GetFederationToken"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "", [ "arn:aws:sts::", {
+                          "Ref": "AWS::AccountId"
+                        } , ":federated-user/GetProjectBackupFile" ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
           }
         ]
       }

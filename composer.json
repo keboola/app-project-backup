@@ -1,8 +1,10 @@
 {
+    "name": "keboola/app-project-backup",
+    "license": "MIT",
     "require": {
         "PHP": "^7.1",
         "keboola/php-component": "^3.0",
-        "keboola/kbc-project-backup": "dev-master"
+        "keboola/kbc-project-backup": "^0.0.1"
     },
     "require-dev": {
         "jakub-onderka/php-parallel-lint": "^1.0",
@@ -24,13 +26,7 @@
         }
     },
     "scripts": {
-        "tests-phpunit": "phpunit",
-        "tests-datadir": "datadir-tests",
-        "tests": [
-            "@tests-phpunit",
-            "@tests-datadir"
-        ],
-
+        "tests": "phpunit",
         "phpstan": "phpstan analyse ./src ./tests --level=max --no-progress -c phpstan.neon",
         "phpcs": "phpcs -n --ignore=vendor --extensions=php .",
         "phpcbf": "phpcbf -n --ignore=vendor --extensions=php .",

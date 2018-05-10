@@ -9,7 +9,7 @@ before_script:
   - export APP_IMAGE=keboola-component
   - docker -v
   - docker build -t $APP_IMAGE .
-  - docker run $APP_IMAGE composer ci
+  - docker run --rm -e TEST_STORAGE_API_URL -e TEST_STORAGE_API_TOKEN -e TEST_AWS_ACCESS_KEY_ID -e TEST_AWS_SECRET_ACCESS_KEY -e TEST_AWS_REGION -e TEST_AWS_S3_BUCKET $APP_IMAGE composer ci
 
   # push test image to ECR
   - docker pull quay.io/keboola/developer-portal-cli-v2:latest

@@ -5,13 +5,18 @@ declare(strict_types=1);
 namespace Keboola\App\ProjectBackup;
 
 use Aws\S3\S3Client;
+use Aws\Sts\StsClient;
 use Keboola\Component\BaseComponent;
 use Keboola\ProjectBackup\S3Backup;
-use Keboola\StorageApi\Client AS StorageApi;
+use Keboola\StorageApi\Client as StorageApi;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
 class Component extends BaseComponent
 {
+    public const FEDERATION_TOKEN_EXPIRATION_HOURS = 24;
+
     public function run(): void
     {
         $action = $this->getConfig()->getAction();
@@ -44,28 +49,90 @@ class Component extends BaseComponent
             'credentials' => [
                 'key' => $imageParams['access_key_id'],
                 'secret' => $imageParams['#secret_access_key'],
-            ]
+            ],
+        ]);
+    }
+
+    private function initSTS(): StsClient
+    {
+        $imageParams = $this->getConfig()->getImageParameters();
+
+        return new StsClient([
+            'version' => 'latest',
+            'region' => $imageParams['region'],
+            'credentials' => [
+                'key' => $imageParams['access_key_id'],
+                'secret' => $imageParams['#secret_access_key'],
+            ],
         ]);
     }
 
     public function handleCredentials(): array
     {
-        $backupId = $this->initSapi()->generateId();
+        $imageParams = $this->getConfig()->getImageParameters();
+
+        $sapi = $this->initSapi();
+        $sts = $this->initSTS();
+
+        /** @var string */
+        $backupId = $sapi->generateId();
+
+        $path = $this->generateBackupPath((int) $backupId, $sapi);
+
+        $result = $this->initS3()->putObject([
+            'Bucket' => $imageParams['#bucket'],
+            'Key' => $path . '/',
+        ]);
+
+        $policy = [
+            'Statement' => [
+                [
+                    'Effect' =>'Allow',
+                    'Action' => 's3:GetObject',
+                    'Resource' => ['arn:aws:s3:::' . $imageParams['#bucket'] . '/' . $path . '/*'],
+                ],
+
+                // List bucket is required for Redshift COPY command even if only one file is loaded
+                [
+                    'Effect' => 'Allow',
+                    'Action' => 's3:ListBucket',
+                    'Resource' => ['arn:aws:s3:::' . $imageParams['#bucket']],
+                    'Condition' => [
+                        'StringLike' => [
+                            's3:prefix' => [$path . '/*'],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $federationToken = $sts->getFederationToken([
+            'DurationSeconds' => self::FEDERATION_TOKEN_EXPIRATION_HOURS * 3600,
+            'Name' => 'GetProjectBackupFile',
+            'Policy' => json_encode($policy),
+        ]);
 
         return [
           'backupId' => $backupId,
+          'backupUri' => $result['ObjectURL'],
+          'region' => $imageParams['region'],
+          'credentials' => [
+              'accessKeyId' => $federationToken['Credentials']['AccessKeyId'],
+              'secretAccessKey' => $federationToken['Credentials']['SecretAccessKey'],
+              'sessionToken' => $federationToken['Credentials']['SessionToken'],
+              'expiration' => $federationToken['Credentials']['Expiration'],
+          ],
         ];
     }
 
-    private function generateBackupPath(StorageApi $client): string
+    private function generateBackupPath(int $backupId, StorageApi $client): string
     {
         $token = $client->verifyToken();
 
         $region = $token['owner']['region'];
         $projectId = $token['owner']['id'];
-        $actionParams = $this->getConfig()->getParameters();
 
-        return sprintf('/data-takeout/%s/%s/%s', $region, $projectId, $actionParams['backupId']);
+        return sprintf('data-takeout/%s/%s/%s', $region, $projectId, $backupId);
     }
 
     public function handleRun(): void
@@ -73,24 +140,25 @@ class Component extends BaseComponent
         $sapi = $this->initSapi();
 
         $imageParams = $this->getConfig()->getImageParameters();
+        $actionParams = $this->getConfig()->getParameters();
 
-        //@FIXME RUN MUSI VALIDOVAT env variables
-        $logger = new Logger(getenv('KBC_COMPONENTID'));
-
-        $backup = new S3Backup($sapi, $this->initS3(), $logger);
+        $logger = $this->initLogger();
+        $backup = new S3Backup($sapi, $this->initS3(), $this->initLogger());
 
         $bucket = $imageParams['#bucket'];
-        $path = $this->generateBackupPath($sapi);
+        $path = $this->generateBackupPath((int) $actionParams['backupId'], $sapi);
 
-        $tableIds = $backup->backupTablesMetadata($bucket, $path);
-        $tablesCount = count($tableIds);
+        $backup->backupTablesMetadata($bucket, $path);
 
-        foreach ($tableIds as $i => $tableId) {
+        $tables = $sapi->listTables(null);
+        $tablesCount = count($tables);
+
+        foreach ($tables as $i => $table) {
             $logger->info(sprintf('Table %d/%d', $i + 1, $tablesCount));
-            $backup->backupTable($tableId, $bucket, $path);
+            $backup->backupTable($table['id'], $bucket, $path);
         }
 
-        $backup->backupConfigs($bucket, $path, 2);
+        $backup->backupConfigs($bucket, $path, true);
     }
 
     protected function getConfigClass(): string
@@ -101,5 +169,26 @@ class Component extends BaseComponent
     protected function getConfigDefinitionClass(): string
     {
         return ConfigDefinition::class;
+    }
+
+    private function initLogger(): Logger
+    {
+        $formatter = new LineFormatter("%message%\n");
+
+        $errorHandler = new StreamHandler('php://stderr', Logger::WARNING, false);
+        $errorHandler->setFormatter($formatter);
+
+        $handler = new StreamHandler('php://stdout', Logger::INFO);
+        $handler->setFormatter($formatter);
+
+        $logger = new Logger(
+            getenv('KBC_COMPONENTID')?: 'project-backup',
+            [
+                $errorHandler,
+                $handler,
+            ]
+        );
+
+        return $logger;
     }
 }
