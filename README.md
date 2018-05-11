@@ -1,4 +1,4 @@
-# KBC Project Region Migration - Backup to S3
+# KBC Project Region Migration - Backup to AWS S3
 
 [![Build Status](https://travis-ci.org/keboola/app-project-backup.svg?branch=master)](https://travis-ci.org/keboola/app-project-backup)
 
