@@ -180,7 +180,7 @@ class Component extends BaseComponent
             $backup->backupTable($table['id'], $bucket, $path);
         }
 
-        $backup->backupConfigs($bucket, $path, true);
+        $backup->backupConfigs($bucket, $path, false);
     }
 
     protected function getConfigClass(): string
