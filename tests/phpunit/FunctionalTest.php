@@ -27,6 +27,11 @@ class FunctionalTest extends TestCase
      */
     protected $sapiClient;
 
+    /**
+     * @var string
+     */
+    private $testRunId;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -49,6 +54,8 @@ class FunctionalTest extends TestCase
         $config->setConfigurationId('sapi-php-test');
         $config->setName('test-configuration');
         $component->addConfiguration($config);
+
+        $this->testRunId = $this->sapiClient->generateRunId();
     }
 
     public function testCreateCredentials(): void
@@ -131,6 +138,9 @@ class FunctionalTest extends TestCase
 
     public function testSuccessfulRun(): void
     {
+        $events = $this->sapiClient->listEvents(['runId' => $this->testRunId]);
+        self::assertCount(0, $events);
+
         $fileSystem = new Filesystem();
 
         // create backupId
@@ -183,6 +193,9 @@ class FunctionalTest extends TestCase
         $this->assertContains('Exporting buckets', $output);
         $this->assertContains('Exporting tables', $output);
         $this->assertContains('Exporting configurations', $output);
+
+        $events = $this->sapiClient->listEvents(['runId' => $this->testRunId]);
+        self::assertGreaterThan(0, count($events));
     }
 
     public function testBadBackupIdRun(): void
@@ -275,6 +288,7 @@ class FunctionalTest extends TestCase
             'KBC_DATADIR' => $this->temp->getTmpFolder(),
             'KBC_URL' => getenv('TEST_STORAGE_API_URL'),
             'KBC_TOKEN' => getenv('TEST_STORAGE_API_TOKEN'),
+            'KBC_RUNID' => $this->testRunId,
         ]);
     }
 }
