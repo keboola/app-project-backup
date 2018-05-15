@@ -35,10 +35,13 @@ class Component extends BaseComponent
 
     private function initSapi(): StorageApi
     {
-        return new StorageApi([
+        $storageApi = new StorageApi([
             'url' => getenv('KBC_URL'),
             'token' => getenv('KBC_TOKEN'),
         ]);
+
+        $storageApi->setRunId(getenv('KBC_RUNID'));
+        return $storageApi;
     }
 
     private function initS3(): S3Client
