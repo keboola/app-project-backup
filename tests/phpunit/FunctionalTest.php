@@ -223,8 +223,10 @@ class FunctionalTest extends TestCase
         $this->assertEquals(1, $runProcess->getExitCode());
 
         $output = $runProcess->getOutput();
-        $this->assertNotEmpty($output);
-        $this->assertContains('was not initialized for this KBC project', $output);
+        $errorOutput = $runProcess->getErrorOutput();
+
+        $this->assertEmpty($output);
+        $this->assertContains('was not initialized for this KBC project', $errorOutput);
     }
 
     public function testRegionErrorRun(): void
@@ -252,9 +254,11 @@ class FunctionalTest extends TestCase
         $this->assertEquals(2, $runProcess->getExitCode());
 
         $output = $runProcess->getOutput();
-        $this->assertNotEmpty($output);
-        $this->assertContains('is not located in', $output);
-        $this->assertContains('unknown-custom-region', $output);
+        $errorOutput = $runProcess->getErrorOutput();
+
+        $this->assertEmpty($output);
+        $this->assertContains('is not located in', $errorOutput);
+        $this->assertContains('unknown-custom-region', $errorOutput);
     }
 
     private function cleanupKbcProject(): void

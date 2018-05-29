@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d8a23f229c7eaae94f2b7adda8e5907c",
+    "content-hash": "6c983cd4cdd3ca524a65bc5eb8ec6c98",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -344,19 +344,20 @@
         },
         {
             "name": "keboola/php-component",
-            "version": "3.0.0",
+            "version": "4.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/php-component.git",
-                "reference": "30ebe52229049f5082b3a567213622d302f36dae"
+                "reference": "1acb4af421a6d22b72edd872b1b24638fbbf7a99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/php-component/zipball/30ebe52229049f5082b3a567213622d302f36dae",
-                "reference": "30ebe52229049f5082b3a567213622d302f36dae",
+                "url": "https://api.github.com/repos/keboola/php-component/zipball/1acb4af421a6d22b72edd872b1b24638fbbf7a99",
+                "reference": "1acb4af421a6d22b72edd872b1b24638fbbf7a99",
                 "shasum": ""
             },
             "require": {
+                "monolog/monolog": "^1.23",
                 "php": "^7.1",
                 "symfony/config": "^4.0",
                 "symfony/filesystem": "^4.0",
@@ -365,11 +366,11 @@
             },
             "require-dev": {
                 "devedge/sami-github": "^1.0",
-                "jakub-onderka/php-parallel-lint": "^0.9",
-                "keboola/coding-standard": "^1.0",
+                "jakub-onderka/php-parallel-lint": "^1.0",
+                "keboola/coding-standard": "^4.0",
                 "keboola/php-temp": "^1.0",
                 "phpstan/phpstan-shim": "^0.9.1",
-                "phpunit/phpunit": "^6.5"
+                "phpunit/phpunit": "^7.1"
             },
             "type": "project",
             "autoload": {
@@ -393,7 +394,7 @@
                 "docker",
                 "keboola"
             ],
-            "time": "2018-04-10T11:44:20+00:00"
+            "time": "2018-05-17T16:21:09+00:00"
         },
         {
             "name": "keboola/php-temp",
