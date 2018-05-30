@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/keboola/app-project-backup.svg?branch=master)](https://travis-ci.org/keboola/app-project-backup)
 
 Application for creating temporary backup of KBC project.
-Backup is stored in AWS S3 and will be automaticaly deleted due configured Lifecycle Policy (https://github.com/keboola/app-project-backup/blob/master/aws-cf-template.json#L17).
+Backup is stored in AWS S3 and will be automaticaly deleted due configured Lifecycle Policy ([aws-cf-template.json](./aws-cf-template.json#L17)).
 
 Generated backup is used by `keboola.project-restore` app (https://github.com/keboola/app-project-restore) to restore project in one of KBC stacks.
 
@@ -75,7 +75,7 @@ git clone https://github.com/keboola/app-project-backup.git
 cd app-project-backup
 ```
 
-- Create AWS services from CloudFormation template https://github.com/keboola/app-project-backup/blob/master/aws-cf-template.json
+- Create AWS services from CloudFormation template [aws-cf-template.json](./aws-cf-template.json)
 
     It will create new S3 bucket and IAM User in AWS
     
