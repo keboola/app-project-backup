@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/keboola/app-project-backup.svg?branch=master)](https://travis-ci.org/keboola/app-project-backup)
 
+> You can use [Project Migrate](https://github.com/keboola/app-project-migrate) application which orchestrates whole process of KBC project migration from one KBC stack to another.
+
 Application for creating temporary backup of KBC project.
 Backup is stored in AWS S3 and will be automaticaly deleted due configured Lifecycle Policy ([aws-cf-template.json](./aws-cf-template.json#L17)).
 
