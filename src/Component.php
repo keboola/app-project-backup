@@ -11,9 +11,6 @@ use Keboola\Component\BaseComponent;
 use Keboola\Component\UserException;
 use Keboola\ProjectBackup\S3Backup;
 use Keboola\StorageApi\Client as StorageApi;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
 
 class Component extends BaseComponent
 {
@@ -170,8 +167,7 @@ class Component extends BaseComponent
             }
         }
 
-        $logger = $this->initLogger();
-        $backup = new S3Backup($sapi, $s3Client, $this->initLogger());
+        $backup = new S3Backup($sapi, $s3Client, $this->getLogger());
 
         $backup->backupTablesMetadata($bucket, $path);
 
@@ -179,7 +175,7 @@ class Component extends BaseComponent
         $tablesCount = count($tables);
 
         foreach ($tables as $i => $table) {
-            $logger->info(sprintf('Table %d/%d', $i + 1, $tablesCount));
+            $this->getLogger()->info(sprintf('Table %d/%d', $i + 1, $tablesCount));
             $backup->backupTable($table['id'], $bucket, $path);
         }
 
@@ -194,26 +190,5 @@ class Component extends BaseComponent
     protected function getConfigDefinitionClass(): string
     {
         return ConfigDefinition::class;
-    }
-
-    private function initLogger(): Logger
-    {
-        $formatter = new LineFormatter("%message%\n");
-
-        $errorHandler = new StreamHandler('php://stderr', Logger::WARNING, false);
-        $errorHandler->setFormatter($formatter);
-
-        $handler = new StreamHandler('php://stdout', Logger::INFO);
-        $handler->setFormatter($formatter);
-
-        $logger = new Logger(
-            getenv('KBC_COMPONENTID')?: 'project-backup',
-            [
-                $errorHandler,
-                $handler,
-            ]
-        );
-
-        return $logger;
     }
 }
