@@ -14,7 +14,7 @@ use Keboola\StorageApi\Client as StorageApi;
 
 class Component extends BaseComponent
 {
-    public const FEDERATION_TOKEN_EXPIRATION_HOURS = 24;
+    public const FEDERATION_TOKEN_EXPIRATION_HOURS = 36;
 
     public function run(): void
     {

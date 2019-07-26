@@ -53,7 +53,7 @@ You will retrieve:
 - `backupId` - Generated id for backup
 - `backupUri` - Uri of S3 storage for your project backup
 - `region` - AWS region where backup will be located _(Same as your KBC project)_
-- `credentials` - Temporary read-only credentials to AWS S3 _(Expiration is set for 24 hours)_
+- `credentials` - Temporary read-only credentials to AWS S3 _(Expiration is set for 36 hours)_
     
 ### 2. Run backup
 

@@ -17,9 +17,9 @@
         "LifecycleConfiguration": {
           "Rules": [
             {
-              "Id": "Delete after 1 day",
+              "Id": "Delete after 2 days",
               "Prefix": "data-takeout",
-              "ExpirationInDays": 1,
+              "ExpirationInDays": 2,
               "Status": "Enabled"
             }
           ]
