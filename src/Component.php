@@ -136,7 +136,13 @@ class Component extends BaseComponent
         $projectId = $token['owner']['id'];
 
         if ($region !== $imageParams['region']) {
-            throw new \Exception(sprintf('Project with ID "%s" is not located in %s region', $projectId, $imageParams['region']));
+            throw new \Exception(
+                sprintf(
+                    'Project with ID "%s" is not located in %s region',
+                    $projectId,
+                    $imageParams['region']
+                )
+            );
         }
 
         return sprintf('data-takeout/%s/%s/%s/', $region, $projectId, $backupId);
@@ -161,7 +167,12 @@ class Component extends BaseComponent
             ]);
         } catch (S3Exception $e) {
             if ($e->getAwsErrorCode() === 'NoSuchKey') {
-                throw new UserException(sprintf('Backup with ID "%s" was not initialized for this KBC project', $actionParams['backupId']));
+                throw new UserException(
+                    sprintf(
+                        'Backup with ID "%s" was not initialized for this KBC project',
+                        $actionParams['backupId']
+                    )
+                );
             } else {
                 throw $e;
             }

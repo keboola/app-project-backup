@@ -94,7 +94,6 @@ class FunctionalTest extends TestCase
         $uriParser = new S3UriParser();
         $uriParts = $uriParser->parse($outputData['backupUri']);
 
-
         $readS3Client = new S3Client([
             'version' => 'latest',
             'region' => $uriParts['region'],
@@ -276,19 +275,19 @@ class FunctionalTest extends TestCase
         // drop linked buckets
         foreach ($this->sapiClient->listBuckets() as $bucket) {
             if (isset($bucket['sourceBucket'])) {
-                $this->sapiClient->dropBucket($bucket["id"], ["force" => true]);
+                $this->sapiClient->dropBucket($bucket['id'], ['force' => true]);
             }
         }
 
         foreach ($this->sapiClient->listBuckets() as $bucket) {
-            $this->sapiClient->dropBucket($bucket["id"], ["force" => true]);
+            $this->sapiClient->dropBucket($bucket['id'], ['force' => true]);
         }
     }
 
     private function createTestProcess(): Process
     {
-        $runCommand = "php /code/src/run.php";
-        return new  Process($runCommand, null, [
+        $runCommand = 'php /code/src/run.php';
+        return new Process($runCommand, null, [
             'KBC_DATADIR' => $this->temp->getTmpFolder(),
             'KBC_URL' => getenv('TEST_STORAGE_API_URL'),
             'KBC_TOKEN' => getenv('TEST_STORAGE_API_TOKEN'),
