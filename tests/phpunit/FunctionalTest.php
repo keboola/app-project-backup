@@ -63,7 +63,7 @@ class FunctionalTest extends TestCase
         $fileSystem = new Filesystem();
         $fileSystem->dumpFile(
             $this->temp->getTmpFolder() . '/config.json',
-            \json_encode([
+            (string) json_encode([
                 'action' => 'generate-read-credentials',
                 'image_parameters' => [
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
@@ -145,7 +145,7 @@ class FunctionalTest extends TestCase
         // create backupId
         $fileSystem->dumpFile(
             $this->temp->getTmpFolder() . '/config.json',
-            \json_encode([
+            (string) json_encode([
                 'action' => 'generate-read-credentials',
                 'image_parameters' => [
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
@@ -169,7 +169,7 @@ class FunctionalTest extends TestCase
         // run backup
         $fileSystem->dumpFile(
             $this->temp->getTmpFolder() . '/config.json',
-            \json_encode([
+            (string) json_encode([
                 'action' => 'run',
                 'parameters' => [
                     'backupId' => $outputData['backupId'],
@@ -202,7 +202,7 @@ class FunctionalTest extends TestCase
         $fileSystem = new Filesystem();
         $fileSystem->dumpFile(
             $this->temp->getTmpFolder() . '/config.json',
-            \json_encode([
+            (string) json_encode([
                 'action' => 'run',
                 'parameters' => [
                     'backupId' => $this->sapiClient->generateId(),
@@ -233,7 +233,7 @@ class FunctionalTest extends TestCase
         $fileSystem = new Filesystem();
         $fileSystem->dumpFile(
             $this->temp->getTmpFolder() . '/config.json',
-            \json_encode([
+            (string) json_encode([
                 'action' => 'run',
                 'parameters' => [
                     'backupId' => $this->sapiClient->generateId(),
@@ -287,7 +287,7 @@ class FunctionalTest extends TestCase
     private function createTestProcess(): Process
     {
         $runCommand = 'php /code/src/run.php';
-        return new Process($runCommand, null, [
+        return Process::fromShellCommandline($runCommand, null, [
             'KBC_DATADIR' => $this->temp->getTmpFolder(),
             'KBC_URL' => getenv('TEST_STORAGE_API_URL'),
             'KBC_TOKEN' => getenv('TEST_STORAGE_API_TOKEN'),

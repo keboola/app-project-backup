@@ -14,7 +14,7 @@ class S3UriParser extends BaseS3UriParser
      */
     public function parse($uri): array
     {
-        if (preg_match('/s3\.amazonaws\.com/ui', $uri)) {
+        if (is_string($uri) && preg_match('/s3\.amazonaws\.com/ui', $uri)) {
             $uri = str_replace('s3.amazonaws.com', 's3.us-east-1.amazonaws.com', $uri);
         }
 
