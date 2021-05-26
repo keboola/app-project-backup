@@ -6,7 +6,8 @@ namespace Keboola\App\ProjectBackup\Tests;
 
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
-use Keboola\App\ProjectBackup\S3UriParser;
+use Aws\S3\S3UriParser;
+use Keboola\App\ProjectBackup\Config;
 use Keboola\StorageApi\Client as StorageApi;
 use Keboola\StorageApi\Components;
 use Keboola\StorageApi\Options\Components\Configuration;
@@ -66,6 +67,7 @@ class FunctionalTest extends TestCase
             (string) json_encode([
                 'action' => 'generate-read-credentials',
                 'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_AWS,
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
                     '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
                     'region' => getenv('TEST_AWS_REGION'),
@@ -96,7 +98,7 @@ class FunctionalTest extends TestCase
 
         $readS3Client = new S3Client([
             'version' => 'latest',
-            'region' => $uriParts['region'],
+            'region' => $outputData['region'],
             'credentials' => [
                 'key' => $outputData['credentials']['accessKeyId'],
                 'secret' => $outputData['credentials']['secretAccessKey'],
@@ -148,6 +150,7 @@ class FunctionalTest extends TestCase
             (string) json_encode([
                 'action' => 'generate-read-credentials',
                 'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_AWS,
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
                     '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
                     'region' => getenv('TEST_AWS_REGION'),
@@ -175,6 +178,7 @@ class FunctionalTest extends TestCase
                     'backupId' => $outputData['backupId'],
                 ],
                 'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_AWS,
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
                     '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
                     'region' => getenv('TEST_AWS_REGION'),
@@ -208,6 +212,7 @@ class FunctionalTest extends TestCase
                     'backupId' => $this->sapiClient->generateId(),
                 ],
                 'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_AWS,
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
                     '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
                     'region' => getenv('TEST_AWS_REGION'),
@@ -239,6 +244,7 @@ class FunctionalTest extends TestCase
                     'backupId' => $this->sapiClient->generateId(),
                 ],
                 'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_AWS,
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
                     '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
                     'region' => 'unknown-custom-region',

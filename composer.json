@@ -1,10 +1,12 @@
 {
     "name": "keboola/app-project-backup",
+    "description": "Backup project",
     "license": "MIT",
     "require": {
-        "PHP": "^7.1",
-        "keboola/kbc-project-backup": "^0.1.0",
-        "keboola/php-component": "~4.1.1"
+        "PHP": "^7.4",
+        "keboola/kbc-project-backup": "dev-COM-842-ondra-support-abs-backup",
+        "keboola/php-component": "~4.1.1",
+        "microsoft/azure-storage-blob": "^1.5"
     },
     "require-dev": {
         "keboola/coding-standard": "^9.0",

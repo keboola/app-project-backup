@@ -12,3 +12,6 @@ services:
       - TEST_AWS_SECRET_ACCESS_KEY
       - TEST_AWS_REGION
       - TEST_AWS_S3_BUCKET
+      - KBC_URL
+      - KBC_RUNID
+      - KBC_TOKEN
