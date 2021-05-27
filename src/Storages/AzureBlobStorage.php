@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Keboola\App\ProjectBackup\Storages;
 
 use Keboola\App\ProjectBackup\Config;
+use Keboola\Component\UserException;
 use Keboola\ProjectBackup\AbsBackup;
 use Keboola\ProjectBackup\Backup;
 use Keboola\StorageApi\Client;
 use MicrosoftAzure\Storage\Blob\BlobRestProxy;
 use MicrosoftAzure\Storage\Blob\BlobSharedAccessSignatureHelper;
+use MicrosoftAzure\Storage\Blob\Models\Container;
 use MicrosoftAzure\Storage\Common\Internal\Resources;
 use MicrosoftAzure\Storage\Common\Middlewares\RetryMiddlewareFactory;
 use Psr\Log\LoggerInterface;
@@ -71,6 +73,14 @@ class AzureBlobStorage implements IStorage
             $this->imageParameters['#accountKey']
         ));
         $client->pushMiddleware(RetryMiddlewareFactory::create());
+
+        $listContainers = array_map(fn(Container $v) => $v->getName(), $client->listContainers()->getContainers());
+        if (!in_array($path, $listContainers)) {
+            throw new UserException(sprintf(
+                'The specified container "%s" does not exist.',
+                $path
+            ));
+        }
 
         return new AbsBackup($sapi, $client, $path, $this->logger);
     }
