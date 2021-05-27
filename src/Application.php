@@ -26,10 +26,10 @@ class Application
         $this->logger = $logger;
 
         switch ($config->getImageParameters()['storageBackendType']) {
-            case Config::STORAGE_BACKEND_AWS:
+            case Config::STORAGE_BACKEND_S3:
                 $this->storageBackend = new AwsS3Storage($config, $logger);
                 break;
-            case Config::STORAGE_BACKEND_AZURE:
+            case Config::STORAGE_BACKEND_ABS:
                 $this->storageBackend = new AzureBlobStorage($config, $logger);
                 break;
             default:
