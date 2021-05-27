@@ -50,7 +50,7 @@ class AzureBlobStorage implements IStorage
         $sasToken = $sasHelper->generateBlobServiceSharedAccessSignatureToken(
             Resources::RESOURCE_TYPE_CONTAINER,
             $path,
-            'r',
+            'rl',
             $expirationDate,
             new \DateTime('now')
         );
@@ -58,6 +58,7 @@ class AzureBlobStorage implements IStorage
         return [
             'backupId' => $backupId,
             'region' => $this->imageParameters['region'],
+            'container' => $path,
             'credentials' => [
                 'connectionString' => $this->getConnectionString($sasToken),
             ],
