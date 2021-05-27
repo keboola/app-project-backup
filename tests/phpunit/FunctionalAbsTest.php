@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Keboola\App\ProjectBackup\Tests;
 
-use Aws\S3\Exception\S3Exception;
-use Aws\S3\S3Client;
-use Aws\S3\S3UriParser;
 use Keboola\App\ProjectBackup\Config;
 use Keboola\StorageApi\Client as StorageApi;
 use Keboola\StorageApi\Components;
@@ -17,7 +14,6 @@ use MicrosoftAzure\Storage\Common\Exceptions\ServiceException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
-use Throwable;
 use function json_decode;
 
 class FunctionalAbsTest extends TestCase
