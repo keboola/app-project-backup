@@ -566,20 +566,20 @@
         },
         {
             "name": "microsoft/azure-storage-common",
-            "version": "1.5.0",
+            "version": "1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Azure/azure-storage-common-php.git",
-                "reference": "fe85677aa5188f8efe6916b4d6773a194e2c2ede"
+                "reference": "e5738035891546075bd369954e8af121d65ebd6d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Azure/azure-storage-common-php/zipball/fe85677aa5188f8efe6916b4d6773a194e2c2ede",
-                "reference": "fe85677aa5188f8efe6916b4d6773a194e2c2ede",
+                "url": "https://api.github.com/repos/Azure/azure-storage-common-php/zipball/e5738035891546075bd369954e8af121d65ebd6d",
+                "reference": "e5738035891546075bd369954e8af121d65ebd6d",
                 "shasum": ""
             },
             "require": {
-                "guzzlehttp/guzzle": "~6.0",
+                "guzzlehttp/guzzle": "~6.0|^7.0",
                 "php": ">=5.6.0"
             },
             "type": "library",
@@ -606,7 +606,11 @@
                 "sdk",
                 "storage"
             ],
-            "time": "2020-08-28T09:02:11+00:00"
+            "support": {
+                "issues": "https://github.com/Azure/azure-storage-common-php/issues",
+                "source": "https://github.com/Azure/azure-storage-common-php/tree/v1.5.1"
+            },
+            "time": "2020-12-28T07:59:51+00:00"
         },
         {
             "name": "monolog/monolog",
