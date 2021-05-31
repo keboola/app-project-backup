@@ -4,33 +4,25 @@ declare(strict_types=1);
 
 namespace Keboola\App\ProjectBackup\Tests;
 
-use Aws\S3\Exception\S3Exception;
-use Aws\S3\S3Client;
-use Keboola\App\ProjectBackup\S3UriParser;
+use Keboola\App\ProjectBackup\Config;
 use Keboola\StorageApi\Client as StorageApi;
 use Keboola\StorageApi\Components;
 use Keboola\StorageApi\Options\Components\Configuration;
 use Keboola\Temp\Temp;
+use MicrosoftAzure\Storage\Blob\BlobRestProxy;
+use MicrosoftAzure\Storage\Common\Exceptions\ServiceException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
+use function json_decode;
 
-class FunctionalTest extends TestCase
+class FunctionalAbsTest extends TestCase
 {
-    /**
-     * @var Temp
-     */
-    protected $temp;
+    protected Temp $temp;
 
-    /**
-     * @var StorageApi
-     */
-    protected $sapiClient;
+    protected StorageApi $sapiClient;
 
-    /**
-     * @var string
-     */
-    private $testRunId;
+    private string $testRunId;
 
     public function setUp(): void
     {
@@ -40,8 +32,8 @@ class FunctionalTest extends TestCase
         $this->temp->initRunFolder();
 
         $this->sapiClient = new StorageApi([
-            'url' => getenv('TEST_STORAGE_API_URL'),
-            'token' => getenv('TEST_STORAGE_API_TOKEN'),
+            'url' => getenv('TEST_AZURE_STORAGE_API_URL'),
+            'token' => getenv('TEST_AZURE_STORAGE_API_TOKEN'),
         ]);
 
         $this->cleanupKbcProject();
@@ -66,10 +58,10 @@ class FunctionalTest extends TestCase
             (string) json_encode([
                 'action' => 'generate-read-credentials',
                 'image_parameters' => [
-                    'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
-                    '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
-                    'region' => getenv('TEST_AWS_REGION'),
-                    '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
+                    'storageBackendType' => Config::STORAGE_BACKEND_ABS,
+                    'accountName' => getenv('TEST_AZURE_ACCOUNT_NAME'),
+                    '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
+                    'region' => getenv('TEST_AZURE_REGION'),
                 ],
             ])
         );
@@ -80,58 +72,28 @@ class FunctionalTest extends TestCase
         $this->assertEmpty($runProcess->getErrorOutput());
 
         $output = $runProcess->getOutput();
-        $outputData = \json_decode($output, true);
+        $outputData = json_decode($output, true);
 
         $this->assertArrayHasKey('backupId', $outputData);
-        $this->assertArrayHasKey('backupUri', $outputData);
         $this->assertArrayHasKey('region', $outputData);
+        $this->assertArrayHasKey('container', $outputData);
         $this->assertArrayHasKey('credentials', $outputData);
-        $this->assertArrayHasKey('accessKeyId', $outputData['credentials']);
-        $this->assertArrayHasKey('secretAccessKey', $outputData['credentials']);
-        $this->assertArrayHasKey('sessionToken', $outputData['credentials']);
-        $this->assertArrayHasKey('expiration', $outputData['credentials']);
+        $this->assertArrayHasKey('connectionString', $outputData['credentials']);
 
-        $uriParser = new S3UriParser();
-        $uriParts = $uriParser->parse($outputData['backupUri']);
-
-        $readS3Client = new S3Client([
-            'version' => 'latest',
-            'region' => $uriParts['region'],
-            'credentials' => [
-                'key' => $outputData['credentials']['accessKeyId'],
-                'secret' => $outputData['credentials']['secretAccessKey'],
-                'token' => $outputData['credentials']['sessionToken'],
-            ],
-        ]);
+        $readClient = BlobRestProxy::createBlobService($outputData['credentials']['connectionString']);
 
         // read permissions
-        $readS3Client->getObject([
-            'Bucket' => $uriParts['bucket'],
-            'Key' => $uriParts['key'],
-        ]);
+        $readClient->listBlobs($outputData['container']);
 
         // write permissions
         try {
-            $readS3Client->putObject([
-                'Bucket' => $uriParts['bucket'],
-                'Key' => $uriParts['key'] . 'sample.txt',
-                'Body' => 'Hello world',
-            ]);
+            $readClient->createBlockBlob($outputData['container'], 'test.json', '{}');
             $this->fail('Adding files to backup folder should produce error');
-        } catch (S3Exception $e) {
-            $this->assertEquals('AccessDenied', $e->getAwsErrorCode());
-        }
-
-        // other backup
-        try {
-            $readS3Client->getObject([
-                'Bucket' => $uriParts['bucket'],
-                'Key' => str_replace($outputData['backupId'], '123', $uriParts['key']),
-            ]);
-
-            $this->fail('Getting other backup should produce error');
-        } catch (S3Exception $e) {
-            $this->assertEquals('AccessDenied', $e->getAwsErrorCode());
+        } catch (ServiceException $e) {
+            $this->assertStringContainsString(
+                'This request is not authorized to perform this operation using this permission',
+                $e->getMessage()
+            );
         }
     }
 
@@ -148,10 +110,10 @@ class FunctionalTest extends TestCase
             (string) json_encode([
                 'action' => 'generate-read-credentials',
                 'image_parameters' => [
-                    'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
-                    '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
-                    'region' => getenv('TEST_AWS_REGION'),
-                    '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
+                    'storageBackendType' => Config::STORAGE_BACKEND_ABS,
+                    'accountName' => getenv('TEST_AZURE_ACCOUNT_NAME'),
+                    '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
+                    'region' => getenv('TEST_AZURE_REGION'),
                 ],
             ])
         );
@@ -162,7 +124,7 @@ class FunctionalTest extends TestCase
         $this->assertEmpty($runProcess->getErrorOutput());
 
         $output = $runProcess->getOutput();
-        $outputData = \json_decode($output, true);
+        $outputData = json_decode($output, true);
 
         $this->assertArrayHasKey('backupId', $outputData);
 
@@ -175,10 +137,10 @@ class FunctionalTest extends TestCase
                     'backupId' => $outputData['backupId'],
                 ],
                 'image_parameters' => [
-                    'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
-                    '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
-                    'region' => getenv('TEST_AWS_REGION'),
-                    '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
+                    'storageBackendType' => Config::STORAGE_BACKEND_ABS,
+                    'accountName' => getenv('TEST_AZURE_ACCOUNT_NAME'),
+                    '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
+                    'region' => getenv('TEST_AZURE_REGION'),
                 ],
             ])
         );
@@ -208,10 +170,10 @@ class FunctionalTest extends TestCase
                     'backupId' => $this->sapiClient->generateId(),
                 ],
                 'image_parameters' => [
-                    'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
-                    '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
-                    'region' => getenv('TEST_AWS_REGION'),
-                    '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
+                    'storageBackendType' => Config::STORAGE_BACKEND_ABS,
+                    'accountName' => getenv('TEST_AZURE_ACCOUNT_NAME'),
+                    '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
+                    'region' => getenv('TEST_AZURE_REGION'),
                 ],
             ])
         );
@@ -225,7 +187,8 @@ class FunctionalTest extends TestCase
         $errorOutput = $runProcess->getErrorOutput();
 
         $this->assertEmpty($output);
-        $this->assertContains('was not initialized for this KBC project', $errorOutput);
+        $this->assertStringContainsString('The specified container', $errorOutput);
+        $this->assertStringContainsString('does not exist.', $errorOutput);
     }
 
     public function testRegionErrorRun(): void
@@ -239,10 +202,10 @@ class FunctionalTest extends TestCase
                     'backupId' => $this->sapiClient->generateId(),
                 ],
                 'image_parameters' => [
-                    'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
-                    '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
+                    'storageBackendType' => Config::STORAGE_BACKEND_ABS,
+                    'accountName' => getenv('TEST_AZURE_ACCOUNT_NAME'),
+                    '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
                     'region' => 'unknown-custom-region',
-                    '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                 ],
             ])
         );
@@ -289,8 +252,8 @@ class FunctionalTest extends TestCase
         $runCommand = 'php /code/src/run.php';
         return Process::fromShellCommandline($runCommand, null, [
             'KBC_DATADIR' => $this->temp->getTmpFolder(),
-            'KBC_URL' => getenv('TEST_STORAGE_API_URL'),
-            'KBC_TOKEN' => getenv('TEST_STORAGE_API_TOKEN'),
+            'KBC_URL' => getenv('TEST_AZURE_STORAGE_API_URL'),
+            'KBC_TOKEN' => getenv('TEST_AZURE_STORAGE_API_TOKEN'),
             'KBC_RUNID' => $this->testRunId,
         ]);
     }

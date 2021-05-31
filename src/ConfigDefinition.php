@@ -64,18 +64,11 @@ class ConfigDefinition extends BaseConfigDefinition
         /** @noinspection NullPointerExceptionInspection */
         $parametersNode
             ->children()
-                ->scalarNode('access_key_id')
-                    ->isRequired()
-                ->end()
-                ->scalarNode('#secret_access_key')
-                    ->isRequired()
-                ->end()
-                ->scalarNode('region')
-                    ->isRequired()
-                ->end()
-                ->scalarNode('#bucket')
-                    ->isRequired()
-                ->end()
+                ->scalarNode('storageBackendType')->isRequired()->end()
+                ->scalarNode('access_key_id')->end()
+                ->scalarNode('#secret_access_key')->end()
+                ->scalarNode('region')->end()
+                ->scalarNode('#bucket')->end()
             ->end()
         ;
         // @formatter:on

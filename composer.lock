@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c5f0a507a48d4728e097de148a945158",
+    "content-hash": "2695a71e2489538dbff9cd40c635f00e",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -313,23 +313,24 @@
         },
         {
             "name": "keboola/kbc-project-backup",
-            "version": "0.1.0",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/php-kbc-project-backup.git",
-                "reference": "72bd66aba59d261b6c07be0acb206362d56570e3"
+                "reference": "c6c48715d51fa53748a80e43f8fb98430c9b2d38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/php-kbc-project-backup/zipball/72bd66aba59d261b6c07be0acb206362d56570e3",
-                "reference": "72bd66aba59d261b6c07be0acb206362d56570e3",
+                "url": "https://api.github.com/repos/keboola/php-kbc-project-backup/zipball/c6c48715d51fa53748a80e43f8fb98430c9b2d38",
+                "reference": "c6c48715d51fa53748a80e43f8fb98430c9b2d38",
                 "shasum": ""
             },
             "require": {
                 "keboola/php-temp": "^1.0.0",
                 "keboola/storage-api-client": "^10.20",
+                "microsoft/azure-storage-blob": "^1.5",
                 "monolog/monolog": "^1.23",
-                "php": "^7.1"
+                "php": "^7.4"
             },
             "require-dev": {
                 "keboola/coding-standard": "^9.0",
@@ -354,7 +355,11 @@
                 }
             ],
             "description": "Backup KBC project",
-            "time": "2020-10-05T06:40:19+00:00"
+            "support": {
+                "issues": "https://github.com/keboola/php-kbc-project-backup/issues",
+                "source": "https://github.com/keboola/php-kbc-project-backup/tree/1.0.0"
+            },
+            "time": "2021-05-28T08:41:40+00:00"
         },
         {
             "name": "keboola/php-component",
@@ -513,16 +518,16 @@
         },
         {
             "name": "microsoft/azure-storage-blob",
-            "version": "1.5.1",
+            "version": "1.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Azure/azure-storage-blob-php.git",
-                "reference": "44f9268b3510a18450c591b1155a49399edb0c9b"
+                "reference": "2475330963372d519387cb8135d6a9cfd42272da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Azure/azure-storage-blob-php/zipball/44f9268b3510a18450c591b1155a49399edb0c9b",
-                "reference": "44f9268b3510a18450c591b1155a49399edb0c9b",
+                "url": "https://api.github.com/repos/Azure/azure-storage-blob-php/zipball/2475330963372d519387cb8135d6a9cfd42272da",
+                "reference": "2475330963372d519387cb8135d6a9cfd42272da",
                 "shasum": ""
             },
             "require": {
@@ -553,7 +558,11 @@
                 "sdk",
                 "storage"
             ],
-            "time": "2020-08-28T09:40:50+00:00"
+            "support": {
+                "issues": "https://github.com/Azure/azure-storage-blob-php/issues",
+                "source": "https://github.com/Azure/azure-storage-blob-php/tree/v1.5.2"
+            },
+            "time": "2020-12-29T02:22:11+00:00"
         },
         {
             "name": "microsoft/azure-storage-common",
@@ -3330,86 +3339,6 @@
             "time": "2020-08-10T04:50:15+00:00"
         },
         {
-            "name": "symfony/polyfill-php80",
-            "version": "v1.18.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-php80.git",
-                "reference": "d87d5766cbf48d72388a9f6b85f280c8ad51f981"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/d87d5766cbf48d72388a9f6b85f280c8ad51f981",
-                "reference": "d87d5766cbf48d72388a9f6b85f280c8ad51f981",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.0.8"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.18-dev"
-                },
-                "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Polyfill\\Php80\\": ""
-                },
-                "files": [
-                    "bootstrap.php"
-                ],
-                "classmap": [
-                    "Resources/stubs"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Ion Bazan",
-                    "email": "ion.bazan@gmail.com"
-                },
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony polyfill backporting some PHP 8.0+ features to lower PHP versions",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "polyfill",
-                "portable",
-                "shim"
-            ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2020-07-14T12:35:20+00:00"
-        },
-        {
             "name": "theseer/tokenizer",
             "version": "1.2.0",
             "source": {
@@ -3511,8 +3440,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.1"
+        "php": "^7.4"
     },
     "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.0.0"
 }

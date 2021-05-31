@@ -84,8 +84,11 @@ cd app-project-backup
 - Create `.env` file an fill variables:
 
     - `TEST_AWS_*` - Output of your CloudFormation stack
-    - `TEST_STORAGE_API_URL` - KBC Storage API endpoint
-    - `TEST_STORAGE_API_TOKEN` - KBC Storage API token
+    - `TEST_STORAGE_API_URL` - KBC Storage with S3 backend API endpoint
+    - `TEST_STORAGE_API_TOKEN` - KBC Storage with S3 backend API token
+    - `TEST_AZURE_STORAGE_API_URL` - KBC Storage with Blob Storage backend API endpoint
+    - `TEST_AZURE_STORAGE_API_TOKEN` - KBC Storage with Blob Storage backend API token
+    - `TEST_AZURE_ACCOUNT_` - Storage Account in your Azure Subscription
     
 ```
 TEST_AWS_ACCESS_KEY_ID=
@@ -95,6 +98,12 @@ TEST_AWS_S3_BUCKET=
 
 TEST_STORAGE_API_URL=
 TEST_STORAGE_API_TOKEN=
+
+TEST_AZURE_REGION=
+TEST_AZURE_STORAGE_API_URL=
+TEST_AZURE_STORAGE_API_TOKEN=
+TEST_AZURE_ACCOUNT_NAME=
+TEST_AZURE_ACCOUNT_KEY=
 ```
 
 - Build Docker image
@@ -109,6 +118,76 @@ docker-compose build
 
 ```
 docker-compose run --rm dev composer ci
+```
+
+### Configuration Examples
+
+- AWS example (Generate Read Credentials action)
+```json
+{
+  "action": "generate-read-credentials",
+  "parameters": {
+    "backupId": null
+  },
+  "image_parameters": {
+    "storageBackendType": "s3",
+    "access_key_id": "ACCESS_KEY_ID",
+    "#secret_access_key": "SECRET_ACCESS_KEY",
+    "#bucket": "BUCKET",
+    "region": "us-east-1"
+  }
+}
+```
+
+
+- Azure example (Generate Read Credentials action)
+```json
+{
+  "action": "generate-read-credentials",
+  "parameters": {
+    "backupId": null
+  },
+  "image_parameters": {
+    "storageBackendType": "abs",
+    "accountName": "ACCOUNT_NAME",
+    "#accountKey": "ACCESS_KEY",
+    "region": "eu-west-1"
+  }
+}
+```
+
+- AWS example (Backup action)
+```json
+{
+  "action": "run",
+  "parameters": {
+    "backupId": "backupId from `generate-read-credentials` action"
+  },
+  "image_parameters": {
+    "storageBackendType": "s3",
+    "access_key_id": "ACCESS_KEY_ID",
+    "#secret_access_key": "SECRET_ACCESS_KEY",
+    "#bucket": "BUCKET",
+    "region": "us-east-1"
+  }
+}
+```
+
+
+- Azure example (Backup action)
+```json
+{
+  "action": "run",
+  "parameters": {
+    "backupId": "backupId from `generate-read-credentials` action"
+  },
+  "image_parameters": {
+    "storageBackendType": "abs",
+    "accountName": "ACCOUNT_NAME",
+    "#accountKey": "ACCESS_KEY",
+    "region": "eu-west-1"
+  }
+}
 ```
  
 # Integration

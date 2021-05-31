@@ -8,9 +8,12 @@ use Keboola\Component\Config\BaseConfig;
 
 class Config extends BaseConfig
 {
-    // @todo implement your custom getters
-    public function getFoo(): string
+    public const STORAGE_BACKEND_S3 = 's3';
+
+    public const STORAGE_BACKEND_ABS = 'abs';
+
+    public function getBackupId(): string
     {
-        return $this->getValue(['parameters', 'foo']);
+        return $this->getValue(['parameters', 'backupId']);
     }
 }
