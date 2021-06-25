@@ -4,7 +4,7 @@
     "license": "MIT",
     "require": {
         "PHP": "^7.4",
-        "keboola/kbc-project-backup": "^1.0.0",
+        "keboola/kbc-project-backup": "dev-COM-882-ondra-unified-backup-table",
         "keboola/php-component": "~4.1.1",
         "microsoft/azure-storage-blob": "^1.5"
     },

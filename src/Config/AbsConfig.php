@@ -12,11 +12,11 @@ class AbsConfig
 
     private string $region;
 
-    public function __construct(array $imageParameters)
+    public function __construct(array $params)
     {
-        $this->accountName = $imageParameters['accountName'];
-        $this->accountKey = $imageParameters['#accountKey'];
-        $this->region = $imageParameters['region'];
+        $this->accountName = $params['accountName'];
+        $this->accountKey = $params['#accountKey'];
+        $this->region = $params['region'];
     }
 
     public function getAccountName(): string
