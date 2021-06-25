@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Keboola\App\ProjectBackup;
+namespace Keboola\App\ProjectBackup\Config;
 
 use Keboola\Component\Config\BaseConfigDefinition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;

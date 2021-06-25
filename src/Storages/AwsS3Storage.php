@@ -8,7 +8,7 @@ use Aws\Result;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Aws\Sts\StsClient;
-use Keboola\App\ProjectBackup\Config;
+use Keboola\App\ProjectBackup\Config\S3Config;
 use Keboola\Component\UserException;
 use Keboola\ProjectBackup\Backup;
 use Keboola\ProjectBackup\S3Backup;
@@ -17,19 +17,19 @@ use Psr\Log\LoggerInterface;
 
 class AwsS3Storage implements IStorage
 {
-    private Config $config;
+    private S3Config $config;
 
-    private array $imageParameters;
+    private string $backupId;
 
     private LoggerInterface $logger;
 
     public const FEDERATION_TOKEN_EXPIRATION_HOURS = 36;
 
-    public function __construct(Config $config, LoggerInterface $logger)
+    public function __construct(S3Config $config, string $backupId, LoggerInterface $logger)
     {
         $this->config = $config;
         $this->logger = $logger;
-        $this->imageParameters = $config->getImageParameters();
+        $this->backupId = $backupId;
     }
 
     public function generateTempReadCredentials(string $backupId, string $path): array
@@ -37,14 +37,14 @@ class AwsS3Storage implements IStorage
         $federationToken = $this->generateFederationToken($path);
 
         $result = $this->initS3()->putObject([
-            'Bucket' => $this->imageParameters['#bucket'],
+            'Bucket' => $this->config->getBucket(),
             'Key' => $path,
         ]);
 
         return [
             'backupId' => $backupId,
             'backupUri' => $result['ObjectURL'],
-            'region' => $this->imageParameters['region'],
+            'region' => $this->config->getRegion(),
             'credentials' => [
                 'accessKeyId' => $federationToken['Credentials']['AccessKeyId'],
                 'secretAccessKey' => $federationToken['Credentials']['SecretAccessKey'],
@@ -60,7 +60,7 @@ class AwsS3Storage implements IStorage
         // check if backup folder was initialized
         try {
             $s3Client->getObject([
-                'Bucket' => $this->imageParameters['#bucket'],
+                'Bucket' => $this->config->getBucket(),
                 'Key' => $path,
             ]);
         } catch (S3Exception $e) {
@@ -68,7 +68,7 @@ class AwsS3Storage implements IStorage
                 throw new UserException(
                     sprintf(
                         'Backup with ID "%s" was not initialized for this KBC project',
-                        $this->config->getBackupId()
+                        $this->backupId
                     )
                 );
             } else {
@@ -79,7 +79,7 @@ class AwsS3Storage implements IStorage
         return new S3Backup(
             $sapi,
             $s3Client,
-            $this->imageParameters['#bucket'],
+            $this->config->getBucket(),
             $path,
             $this->logger
         );
@@ -94,14 +94,14 @@ class AwsS3Storage implements IStorage
                 [
                     'Effect' =>'Allow',
                     'Action' => 's3:GetObject',
-                    'Resource' => ['arn:aws:s3:::' . $this->imageParameters['#bucket'] . '/' . $path . '*'],
+                    'Resource' => ['arn:aws:s3:::' . $this->config->getBucket() . '/' . $path . '*'],
                 ],
 
                 // List bucket is required for Redshift COPY command even if only one file is loaded
                 [
                     'Effect' => 'Allow',
                     'Action' => 's3:ListBucket',
-                    'Resource' => ['arn:aws:s3:::' . $this->imageParameters['#bucket']],
+                    'Resource' => ['arn:aws:s3:::' . $this->config->getBucket()],
                     'Condition' => [
                         'StringLike' => [
                             's3:prefix' => [$path . '*'],
@@ -122,10 +122,10 @@ class AwsS3Storage implements IStorage
     {
         return new StsClient([
             'version' => 'latest',
-            'region' => $this->imageParameters['region'],
+            'region' => $this->config->getRegion(),
             'credentials' => [
-                'key' => $this->imageParameters['access_key_id'],
-                'secret' => $this->imageParameters['#secret_access_key'],
+                'key' => $this->config->getAccessKeyId(),
+                'secret' => $this->config->getSecretAccessKey(),
             ],
         ]);
     }
@@ -134,10 +134,10 @@ class AwsS3Storage implements IStorage
     {
         return new S3Client([
             'version' => 'latest',
-            'region' => $this->imageParameters['region'],
+            'region' => $this->config->getRegion(),
             'credentials' => [
-                'key' => $this->imageParameters['access_key_id'],
-                'secret' => $this->imageParameters['#secret_access_key'],
+                'key' => $this->config->getAccessKeyId(),
+                'secret' => $this->config->getSecretAccessKey(),
             ],
         ]);
     }

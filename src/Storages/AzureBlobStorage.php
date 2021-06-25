@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Keboola\App\ProjectBackup\Storages;
 
-use Keboola\App\ProjectBackup\Config;
+use DateTime;
+use Keboola\App\ProjectBackup\Config\AbsConfig;
 use Keboola\Component\UserException;
 use Keboola\ProjectBackup\AbsBackup;
 use Keboola\ProjectBackup\Backup;
@@ -18,15 +19,15 @@ use Psr\Log\LoggerInterface;
 
 class AzureBlobStorage implements IStorage
 {
-    private array $imageParameters;
+    private AbsConfig $config;
 
     private LoggerInterface $logger;
 
     public const SAS_DEFAULT_EXPIRATION_HOURS = 36;
 
-    public function __construct(Config $config, LoggerInterface $logger)
+    public function __construct(AbsConfig $config, LoggerInterface $logger)
     {
-        $this->imageParameters = $config->getImageParameters();
+        $this->config = $config;
         $this->logger = $logger;
     }
 
@@ -36,28 +37,28 @@ class AzureBlobStorage implements IStorage
 
         $client = BlobRestProxy::createBlobService(sprintf(
             'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net',
-            $this->imageParameters['accountName'],
-            $this->imageParameters['#accountKey']
+            $this->config->getAccountName(),
+            $this->config->getAccountKey()
         ));
         $client->createContainer($path);
 
         $sasHelper = new BlobSharedAccessSignatureHelper(
-            $this->imageParameters['accountName'],
-            $this->imageParameters['#accountKey']
+            $this->config->getAccountName(),
+            $this->config->getAccountKey()
         );
 
-        $expirationDate = (new \DateTime())->modify('+' . self::SAS_DEFAULT_EXPIRATION_HOURS . 'hour');
+        $expirationDate = (new DateTime())->modify('+' . self::SAS_DEFAULT_EXPIRATION_HOURS . 'hour');
         $sasToken = $sasHelper->generateBlobServiceSharedAccessSignatureToken(
             Resources::RESOURCE_TYPE_CONTAINER,
             $path,
             'rl',
             $expirationDate,
-            new \DateTime('now')
+            new DateTime('now')
         );
 
         return [
             'backupId' => $backupId,
-            'region' => $this->imageParameters['region'],
+            'region' => $this->config->getRegion(),
             'container' => $path,
             'credentials' => [
                 'connectionString' => $this->getConnectionString($sasToken),
@@ -70,8 +71,8 @@ class AzureBlobStorage implements IStorage
         $path = $this->modifyPath($path);
         $client = BlobRestProxy::createBlobService(sprintf(
             'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net',
-            $this->imageParameters['accountName'],
-            $this->imageParameters['#accountKey']
+            $this->config->getAccountName(),
+            $this->config->getAccountKey()
         ));
         $client->pushMiddleware(RetryMiddlewareFactory::create());
 
@@ -91,7 +92,7 @@ class AzureBlobStorage implements IStorage
         return sprintf(
             '%s=https://%s.blob.core.windows.net;SharedAccessSignature=%s',
             Resources::BLOB_ENDPOINT_NAME,
-            $this->imageParameters['accountName'],
+            $this->config->getAccountName(),
             $sasToken
         );
     }
@@ -99,7 +100,6 @@ class AzureBlobStorage implements IStorage
     private function modifyPath(string $path): string
     {
         $path = str_replace('/', '-', $path);
-        $path = rtrim($path, '-');
-        return $path;
+        return rtrim($path, '-');
     }
 }
