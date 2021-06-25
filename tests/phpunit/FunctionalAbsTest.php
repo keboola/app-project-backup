@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\App\ProjectBackup\Tests;
 
 use Keboola\App\ProjectBackup\Config\Config;
+use Keboola\Csv\CsvFile;
 use Keboola\StorageApi\Client as StorageApi;
 use Keboola\StorageApi\Components;
 use Keboola\StorageApi\Options\Components\Configuration;
@@ -154,6 +155,81 @@ class FunctionalAbsTest extends TestCase
         $this->assertContains('Exporting buckets', $output);
         $this->assertContains('Exporting tables', $output);
         $this->assertContains('Exporting configurations', $output);
+
+        $events = $this->sapiClient->listEvents(['runId' => $this->testRunId]);
+        self::assertGreaterThan(0, count($events));
+    }
+
+    public function testSuccessfulRunOnlyStructure(): void
+    {
+        $events = $this->sapiClient->listEvents(['runId' => $this->testRunId]);
+        self::assertCount(0, $events);
+
+        $tmp = new Temp();
+        $tmp->initRunFolder();
+
+        $file = $tmp->createFile('testStructureOnly.csv');
+        file_put_contents($file->getPathname(), 'a,b,c,d,e,f');
+
+        $csvFile = new CsvFile($file);
+
+        $this->sapiClient->createBucket('test-bucket', 'out');
+        $this->sapiClient->createTable('out.c-test-bucket', 'test-table', $csvFile);
+
+        $fileSystem = new Filesystem();
+
+        // create backupId
+        $fileSystem->dumpFile(
+            $this->temp->getTmpFolder() . '/config.json',
+            (string) json_encode([
+                'action' => 'generate-read-credentials',
+                'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_ABS,
+                    'accountName' => getenv('TEST_AZURE_ACCOUNT_NAME'),
+                    '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
+                    'region' => getenv('TEST_AZURE_REGION'),
+                ],
+            ])
+        );
+
+        $runProcess = $this->createTestProcess();
+        $runProcess->mustRun();
+
+        $this->assertEmpty($runProcess->getErrorOutput());
+
+        $output = $runProcess->getOutput();
+        $outputData = json_decode($output, true);
+
+        $this->assertArrayHasKey('backupId', $outputData);
+
+        // run backup
+        $fileSystem->dumpFile(
+            $this->temp->getTmpFolder() . '/config.json',
+            (string) json_encode([
+                'action' => 'run',
+                'parameters' => [
+                    'backupId' => $outputData['backupId'],
+                    'exportStructureOnly' => true,
+                ],
+                'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_ABS,
+                    'accountName' => getenv('TEST_AZURE_ACCOUNT_NAME'),
+                    '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
+                    'region' => getenv('TEST_AZURE_REGION'),
+                ],
+            ])
+        );
+
+        $runProcess = $this->createTestProcess();
+        $runProcess->mustRun();
+
+        $this->assertEmpty($runProcess->getErrorOutput());
+
+        $output = $runProcess->getOutput();
+        $this->assertContains('Exporting buckets', $output);
+        $this->assertContains('Exporting tables', $output);
+        $this->assertContains('Exporting configurations', $output);
+        $this->assertNotContains('Table ', $output);
 
         $events = $this->sapiClient->listEvents(['runId' => $this->testRunId]);
         self::assertGreaterThan(0, count($events));
