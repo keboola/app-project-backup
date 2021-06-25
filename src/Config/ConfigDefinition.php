@@ -80,6 +80,7 @@ class ConfigDefinition extends BaseConfigDefinition
                 ->scalarNode('backupId')->isRequired()->end()
                 ->scalarNode('backupPath')->end()
                 ->booleanNode('exportStructureOnly')->end()
+                ->booleanNode('includeVersions')->end()
                 ->scalarNode('storageBackendType')->end()
                 ->scalarNode('accountName')->end()
                 ->scalarNode('#accountKey')->end()
