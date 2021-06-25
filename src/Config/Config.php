@@ -31,6 +31,11 @@ class Config extends BaseConfig
         return $this->getValue(['parameters', 'exportStructureOnly'], false);
     }
 
+    public function includeVersions(): bool
+    {
+        return $this->getValue(['parameters', 'includeVersions'], false);
+    }
+
     public function isUserDefinedCredentials(): bool
     {
         $storageBackendType = $this->getValue(['parameters', 'storageBackendType'], '');
