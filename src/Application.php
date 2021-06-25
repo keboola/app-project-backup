@@ -73,7 +73,7 @@ class Application
         if ($this->config->isUserDefinedCredentials()) {
             $path = $this->config->getPath();
         } else {
-            $path = $this->generateBackupPath((int)$backupId, $sapi);
+            $path = $this->generateBackupPath((int) $backupId, $sapi);
         }
 
         return $this->storageBackend->generateTempReadCredentials($backupId, $path);
