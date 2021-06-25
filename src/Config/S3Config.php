@@ -14,12 +14,12 @@ class S3Config
 
     private string $bucket;
 
-    public function __construct(array $imageParameters)
+    public function __construct(array $params)
     {
-        $this->accessKeyId = $imageParameters['access_key_id'];
-        $this->secretAccessKey = $imageParameters['#secret_access_key'];
-        $this->region = $imageParameters['region'];
-        $this->bucket = $imageParameters['#bucket'];
+        $this->accessKeyId = $params['access_key_id'];
+        $this->secretAccessKey = $params['#secret_access_key'];
+        $this->region = $params['region'];
+        $this->bucket = $params['#bucket'];
     }
 
     public function getAccessKeyId(): string
