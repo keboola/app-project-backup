@@ -54,7 +54,14 @@ class ConfigDefinition extends BaseConfigDefinition
                             }
                             break;
                         case Config::STORAGE_BACKEND_S3:
-                            foreach (['access_key_id', '#secret_access_key', 'access_key_id', 'region'] as $item) {
+                            $requiredItems = [
+                                'access_key_id',
+                                '#secret_access_key',
+                                'access_key_id',
+                                'region',
+                                '#bucket',
+                            ];
+                            foreach ($requiredItems as $item) {
                                 if (empty($v[$item])) {
                                     throw new InvalidConfigurationException(sprintf(
                                         'Missing required parameter "%s".',

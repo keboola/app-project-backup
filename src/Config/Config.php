@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Keboola\App\ProjectBackup\Config;
 
 use Keboola\Component\Config\BaseConfig;
-use Keboola\Csv\InvalidArgumentException;
 
 class Config extends BaseConfig
 {
