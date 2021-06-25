@@ -55,11 +55,13 @@ class Application
 
         $backup->backupTablesMetadata();
 
-        $tables = $sapi->listTables();
-        $tablesCount = count($tables);
-        foreach ($tables as $i => $table) {
-            $this->logger->info(sprintf('Table %d/%d', $i + 1, $tablesCount));
-            $backup->backupTable($table['id']);
+        if (!$this->config->exportStructureOnly()) {
+            $tables = $sapi->listTables();
+            $tablesCount = count($tables);
+            foreach ($tables as $i => $table) {
+                $this->logger->info(sprintf('Table %d/%d', $i + 1, $tablesCount));
+                $backup->backupTable($table['id']);
+            }
         }
 
         $backup->backupConfigs(false);
