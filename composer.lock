@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4a384a09ca15c066b471f8ac1710e501",
+    "content-hash": "e2c55d22b8652974c5f7c943d382cfc5",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -313,16 +313,16 @@
         },
         {
             "name": "keboola/kbc-project-backup",
-            "version": "dev-COM-882-ondra-unified-backup-table",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/php-kbc-project-backup.git",
-                "reference": "3ee256bdb7670816a2ba6000452fcc3bdfa921b5"
+                "reference": "e320bbe3aa8c8595e93bba915256da78c56c2c52"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/php-kbc-project-backup/zipball/3ee256bdb7670816a2ba6000452fcc3bdfa921b5",
-                "reference": "3ee256bdb7670816a2ba6000452fcc3bdfa921b5",
+                "url": "https://api.github.com/repos/keboola/php-kbc-project-backup/zipball/e320bbe3aa8c8595e93bba915256da78c56c2c52",
+                "reference": "e320bbe3aa8c8595e93bba915256da78c56c2c52",
                 "shasum": ""
             },
             "require": {
@@ -357,9 +357,9 @@
             "description": "Backup KBC project",
             "support": {
                 "issues": "https://github.com/keboola/php-kbc-project-backup/issues",
-                "source": "https://github.com/keboola/php-kbc-project-backup/tree/COM-882-ondra-unified-backup-table"
+                "source": "https://github.com/keboola/php-kbc-project-backup/tree/1.1.0"
             },
-            "time": "2021-06-25T21:11:51+00:00"
+            "time": "2021-06-28T12:18:35+00:00"
         },
         {
             "name": "keboola/php-component",
@@ -3440,9 +3440,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "keboola/kbc-project-backup": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
