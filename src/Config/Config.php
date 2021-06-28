@@ -26,6 +26,11 @@ class Config extends BaseConfig
         return $this->getImageParameters()['storageBackendType'];
     }
 
+    public function exportStructureOnly(): bool
+    {
+        return $this->getValue(['parameters', 'exportStructureOnly'], false);
+    }
+
     public function isUserDefinedCredentials(): bool
     {
         $storageBackendType = $this->getValue(['parameters', 'storageBackendType'], '');
