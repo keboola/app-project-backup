@@ -7,6 +7,7 @@ namespace Keboola\App\ProjectBackup\Config;
 use Keboola\Component\Config\BaseConfigDefinition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class ConfigDefinition extends BaseConfigDefinition
 {
@@ -39,10 +40,52 @@ class ConfigDefinition extends BaseConfigDefinition
         // @formatter:off
         /** @noinspection NullPointerExceptionInspection */
         $parametersNode
+            ->validate()->always(function ($v) {
+                if (!empty($v['storageBackendType'])) {
+                    switch ($v['storageBackendType']) {
+                        case Config::STORAGE_BACKEND_ABS:
+                            foreach (['backupPath', 'accountName', '#accountKey', 'region'] as $item) {
+                                if (empty($v[$item])) {
+                                    throw new InvalidConfigurationException(sprintf(
+                                        'Missing required parameter "%s".',
+                                        $item
+                                    ));
+                                }
+                            }
+                            break;
+                        case Config::STORAGE_BACKEND_S3:
+                            $requiredItems = [
+                                'access_key_id',
+                                '#secret_access_key',
+                                'access_key_id',
+                                'region',
+                                '#bucket',
+                            ];
+                            foreach ($requiredItems as $item) {
+                                if (empty($v[$item])) {
+                                    throw new InvalidConfigurationException(sprintf(
+                                        'Missing required parameter "%s".',
+                                        $item
+                                    ));
+                                }
+                            }
+                            break;
+                        default:
+                            throw new InvalidConfigurationException('Unknown storage backend type.');
+                    }
+                }
+                return $v;
+            })->end()
             ->children()
-                ->scalarNode('backupId')
-                    ->isRequired()
-                ->end()
+                ->scalarNode('backupId')->isRequired()->end()
+                ->scalarNode('backupPath')->end()
+                ->scalarNode('storageBackendType')->end()
+                ->scalarNode('accountName')->end()
+                ->scalarNode('#accountKey')->end()
+                ->scalarNode('region')->end()
+                ->scalarNode('access_key_id')->end()
+                ->scalarNode('#secret_access_key')->end()
+                ->scalarNode('#bucket')->end()
             ->end()
         ;
         // @formatter:on
@@ -65,6 +108,8 @@ class ConfigDefinition extends BaseConfigDefinition
         $parametersNode
             ->children()
                 ->scalarNode('storageBackendType')->isRequired()->end()
+                ->scalarNode('accountName')->end()
+                ->scalarNode('#accountKey')->end()
                 ->scalarNode('access_key_id')->end()
                 ->scalarNode('#secret_access_key')->end()
                 ->scalarNode('region')->end()

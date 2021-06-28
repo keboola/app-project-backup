@@ -19,16 +19,37 @@ class Config extends BaseConfig
 
     public function getStorageBackendType(): string
     {
+        $storageBackendType = $this->getValue(['parameters', 'storageBackendType'], '');
+        if (!empty($storageBackendType)) {
+            return $storageBackendType;
+        }
         return $this->getImageParameters()['storageBackendType'];
+    }
+
+    public function isUserDefinedCredentials(): bool
+    {
+        $storageBackendType = $this->getValue(['parameters', 'storageBackendType'], '');
+        return !empty($storageBackendType);
+    }
+
+    public function getCredentialsParameters(): array
+    {
+
+        return $this->isUserDefinedCredentials() ? $this->getParameters() : $this->getImageParameters();
+    }
+
+    public function getPath(): string
+    {
+        return $this->getValue(['parameters', 'backupPath'], '');
     }
 
     public function getS3Config(): S3Config
     {
-        return new S3Config($this->getImageParameters());
+        return new S3Config($this->getCredentialsParameters());
     }
 
     public function getAbsConfig(): AbsConfig
     {
-        return new AbsConfig($this->getImageParameters());
+        return new AbsConfig($this->getCredentialsParameters());
     }
 }
