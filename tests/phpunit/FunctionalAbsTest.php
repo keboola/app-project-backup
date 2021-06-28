@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\App\ProjectBackup\Tests;
 
-use Keboola\App\ProjectBackup\Config;
+use Keboola\App\ProjectBackup\Config\Config;
 use Keboola\StorageApi\Client as StorageApi;
 use Keboola\StorageApi\Components;
 use Keboola\StorageApi\Options\Components\Configuration;

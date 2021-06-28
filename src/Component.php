@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Keboola\App\ProjectBackup;
 
+use Keboola\App\ProjectBackup\Config\Config;
+use Keboola\App\ProjectBackup\Config\ConfigDefinition;
 use Keboola\Component\BaseComponent;
 
 class Component extends BaseComponent

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\App\ProjectBackup;
 
 use Exception;
+use Keboola\App\ProjectBackup\Config\Config;
 use Keboola\App\ProjectBackup\Storages\AwsS3Storage;
 use Keboola\App\ProjectBackup\Storages\AzureBlobStorage;
 use Keboola\App\ProjectBackup\Storages\IStorage;
@@ -25,17 +26,17 @@ class Application
         $this->config = $config;
         $this->logger = $logger;
 
-        switch ($config->getImageParameters()['storageBackendType']) {
+        switch ($config->getStorageBackendType()) {
             case Config::STORAGE_BACKEND_S3:
-                $this->storageBackend = new AwsS3Storage($config, $logger);
+                $this->storageBackend = new AwsS3Storage($config->getS3Config(), $config->getBackupId(), $logger);
                 break;
             case Config::STORAGE_BACKEND_ABS:
-                $this->storageBackend = new AzureBlobStorage($config, $logger);
+                $this->storageBackend = new AzureBlobStorage($config->getAbsConfig(), $logger);
                 break;
             default:
                 throw new UserException(sprintf(
                     'Unknown storage backend type "%s".',
-                    $config->getImageParameters()['storageBackendType']
+                    $config->getStorageBackendType()
                 ));
         }
     }
