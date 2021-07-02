@@ -311,7 +311,7 @@ class ConfigTest extends TestCase
                     '#bucket' => 'testBucket',
                 ],
             ],
-            'The child node "backupId" at path "root.parameters" must be configured.'
+            'The child node "backupId" at path "root.parameters" must be configured.',
         ];
     }
 }
