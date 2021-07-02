@@ -73,11 +73,17 @@ class ConfigDefinition extends BaseConfigDefinition
                         default:
                             throw new InvalidConfigurationException('Unknown storage backend type.');
                     }
+                } else {
+                    if (!array_key_exists('backupId', $v)) {
+                        throw new InvalidConfigurationException(
+                            'The child node "backupId" at path "root.parameters" must be configured.'
+                        );
+                    }
                 }
                 return $v;
             })->end()
             ->children()
-                ->scalarNode('backupId')->isRequired()->end()
+                ->scalarNode('backupId')->end()
                 ->scalarNode('backupPath')->end()
                 ->booleanNode('exportStructureOnly')->end()
                 ->booleanNode('includeVersions')->end()

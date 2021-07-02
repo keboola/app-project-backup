@@ -112,7 +112,6 @@ class ConfigTest extends TestCase
             [
                 'action' => 'run',
                 'parameters' => [
-                    'backupId' => 123456,
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     'access_key_id' => 'testAccessKeyId',
                     '#secret_access_key' => 'testAccessKey',
@@ -127,7 +126,6 @@ class ConfigTest extends TestCase
                 ],
             ],
             [
-                'backupId' => 123456,
                 'storageBackendType' => Config::STORAGE_BACKEND_S3,
                 'access_key_id' => 'testAccessKeyId',
                 '#secret_access_key' => 'testAccessKey',
@@ -143,7 +141,6 @@ class ConfigTest extends TestCase
             [
                 'action' => 'run',
                 'parameters' => [
-                    'backupId' => 123456,
                     'backupPath' => 'testPath',
                     'storageBackendType' => Config::STORAGE_BACKEND_ABS,
                     'accountName' => 'testAccountName',
@@ -159,7 +156,6 @@ class ConfigTest extends TestCase
                 ],
             ],
             [
-                'backupId' => 123456,
                 'backupPath' => 'testPath',
                 'storageBackendType' => Config::STORAGE_BACKEND_ABS,
                 'accountName' => 'testAccountName',
@@ -178,7 +174,6 @@ class ConfigTest extends TestCase
             [
                 'action' => 'run',
                 'parameters' => [
-                    'backupId' => 123456,
                     'storageBackendType' => Config::STORAGE_BACKEND_ABS,
                     'accountName' => 'testAccountName',
                     '#accountKey' => 'testAccountKey',
@@ -212,7 +207,6 @@ class ConfigTest extends TestCase
             [
                 'action' => 'run',
                 'parameters' => [
-                    'backupId' => 123456,
                     'backupPath' => 'testBackupPath',
                     'storageBackendType' => Config::STORAGE_BACKEND_ABS,
                     'accountName' => 'testAccountName',
@@ -229,7 +223,6 @@ class ConfigTest extends TestCase
             [
                 'action' => 'run',
                 'parameters' => [
-                    'backupId' => 123456,
                     'backupPath' => 'testBackupPath',
                     'storageBackendType' => Config::STORAGE_BACKEND_ABS,
                     'accountName' => 'testAccountName',
@@ -246,7 +239,6 @@ class ConfigTest extends TestCase
             [
                 'action' => 'run',
                 'parameters' => [
-                    'backupId' => 123456,
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     '#secret_access_key' => 'testAccessKey',
                     'region' => 'testRegion',
@@ -263,7 +255,6 @@ class ConfigTest extends TestCase
             [
                 'action' => 'run',
                 'parameters' => [
-                    'backupId' => 123456,
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     'access_key_id' => 'testAccessKeyId',
                     'region' => 'testRegion',
@@ -280,7 +271,6 @@ class ConfigTest extends TestCase
             [
                 'action' => 'run',
                 'parameters' => [
-                    'backupId' => 123456,
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     'access_key_id' => 'testAccessKeyId',
                     '#secret_access_key' => 'testAccessKey',
@@ -297,7 +287,6 @@ class ConfigTest extends TestCase
             [
                 'action' => 'run',
                 'parameters' => [
-                    'backupId' => 123456,
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     'access_key_id' => 'testAccessKeyId',
                     '#secret_access_key' => 'testAccessKey',
@@ -308,6 +297,21 @@ class ConfigTest extends TestCase
                 ],
             ],
             'Missing required parameter "#bucket".',
+        ];
+
+        yield 'missing-backupId' => [
+            [
+                'action' => 'run',
+                'parameters' => [],
+                'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_S3,
+                    'access_key_id' => 'testAccessKeyId',
+                    '#secret_access_key' => 'testAccessKey',
+                    'region' => 'testRegion',
+                    '#bucket' => 'testBucket',
+                ],
+            ],
+            'The child node "backupId" at path "root.parameters" must be configured.'
         ];
     }
 }
