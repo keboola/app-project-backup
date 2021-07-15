@@ -356,7 +356,7 @@ class FunctionalS3Test extends TestCase
 
         $objects = $client->listObjects([
             'Bucket' => getenv('TEST_AWS_S3_BUCKET'),
-            'Key' => 'unexists/backup/folder'
+            'Key' => 'unexists/backup/folder',
         ])->toArray();
 
         $this->assertNotEmpty($objects['Contents']);
