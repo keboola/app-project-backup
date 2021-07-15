@@ -47,6 +47,7 @@ class FunctionalS3Test extends TestCase
         ]);
 
         $this->cleanupKbcProject();
+        $this->cleanupS3Bucket();
 
         $component = new Components($this->sapiClient);
 
@@ -314,6 +315,53 @@ class FunctionalS3Test extends TestCase
         );
     }
 
+    public function testCreateUnexistsBackupFolderS3(): void
+    {
+        $fileSystem = new Filesystem();
+        $fileSystem->dumpFile(
+            $this->temp->getTmpFolder() . '/config.json',
+            (string) json_encode([
+                'action' => 'run',
+                'parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_S3,
+                    'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
+                    '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
+                    'region' => getenv('TEST_AWS_REGION'),
+                    '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
+                    'backupPath' => 'unexists/backup/folder',
+                ],
+                'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_S3,
+                    'access_key_id' => '',
+                    '#secret_access_key' => '',
+                    'region' => '',
+                    '#bucket' => '',
+                ],
+            ])
+        );
+
+        $runProcess = $this->createTestProcess();
+        $runProcess->run();
+
+        $this->assertEquals(0, $runProcess->getExitCode());
+
+        $client = new S3Client([
+            'version' => 'latest',
+            'region' => getenv('TEST_AWS_REGION'),
+            'credentials' => [
+                'key' => getenv('TEST_AWS_ACCESS_KEY_ID'),
+                'secret' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
+            ],
+        ]);
+
+        $objects = $client->listObjects([
+            'Bucket' => getenv('TEST_AWS_S3_BUCKET'),
+            'Key' => 'unexists/backup/folder',
+        ])->toArray();
+
+        $this->assertNotEmpty($objects['Contents']);
+    }
+
     public function testRegionErrorRun(): void
     {
         $fileSystem = new Filesystem();
@@ -380,5 +428,30 @@ class FunctionalS3Test extends TestCase
             'KBC_TOKEN' => getenv('TEST_STORAGE_API_TOKEN'),
             'KBC_RUNID' => $this->testRunId,
         ]);
+    }
+
+    private function cleanupS3Bucket(): void
+    {
+        $client = new S3Client([
+            'version' => 'latest',
+            'region' => getenv('TEST_AWS_REGION'),
+            'credentials' => [
+                'key' => getenv('TEST_AWS_ACCESS_KEY_ID'),
+                'secret' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
+            ],
+        ]);
+
+        $objects = $client->listObjects([
+            'Bucket' => getenv('TEST_AWS_S3_BUCKET'),
+        ])->toArray();
+
+        if (!empty($objects['Contents'])) {
+            $client->deleteObjects(
+                [
+                    'Bucket' => getenv('TEST_AWS_S3_BUCKET'),
+                    'Delete' => ['Objects' => $objects['Contents']],
+                ]
+            );
+        }
     }
 }

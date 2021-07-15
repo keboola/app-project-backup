@@ -21,22 +21,22 @@ class AwsS3Storage implements IStorage
 
     private LoggerInterface $logger;
 
+    private bool $userDefinedCredentials;
+
     public const FEDERATION_TOKEN_EXPIRATION_HOURS = 36;
 
-    public function __construct(S3Config $config, LoggerInterface $logger)
+    public function __construct(S3Config $config, bool $userDefinedCredentials, LoggerInterface $logger)
     {
         $this->config = $config;
         $this->logger = $logger;
+        $this->userDefinedCredentials = $userDefinedCredentials;
     }
 
     public function generateTempReadCredentials(string $backupId, string $path): array
     {
         $federationToken = $this->generateFederationToken($path);
 
-        $result = $this->initS3()->putObject([
-            'Bucket' => $this->config->getBucket(),
-            'Key' => $path,
-        ]);
+        $result = $this->createBackupPath($path);
 
         return [
             'backupId' => $backupId,
@@ -62,13 +62,17 @@ class AwsS3Storage implements IStorage
             ]);
         } catch (S3Exception $e) {
             if ($e->getAwsErrorCode() === 'NoSuchKey') {
-                throw new UserException(
-                    sprintf(
-                        'Backup path "%s" not found in the bucket "%s".',
-                        $path,
-                        $this->config->getBucket()
-                    )
-                );
+                if ($this->userDefinedCredentials) {
+                    $this->createBackupPath($path);
+                } else {
+                    throw new UserException(
+                        sprintf(
+                            'Backup path "%s" not found in the bucket "%s".',
+                            $path,
+                            $this->config->getBucket()
+                        )
+                    );
+                }
             } else {
                 throw $e;
             }
@@ -137,6 +141,14 @@ class AwsS3Storage implements IStorage
                 'key' => $this->config->getAccessKeyId(),
                 'secret' => $this->config->getSecretAccessKey(),
             ],
+        ]);
+    }
+
+    private function createBackupPath(string $path): Result
+    {
+        return $this->initS3()->putObject([
+            'Bucket' => $this->config->getBucket(),
+            'Key' => $path,
         ]);
     }
 }
