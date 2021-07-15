@@ -28,7 +28,7 @@ class Application
 
         switch ($config->getStorageBackendType()) {
             case Config::STORAGE_BACKEND_S3:
-                $this->storageBackend = new AwsS3Storage($config->getS3Config(), $config->getBackupId(), $logger);
+                $this->storageBackend = new AwsS3Storage($config->getS3Config(), $logger);
                 break;
             case Config::STORAGE_BACKEND_ABS:
                 $this->storageBackend = new AzureBlobStorage($config->getAbsConfig(), $logger);

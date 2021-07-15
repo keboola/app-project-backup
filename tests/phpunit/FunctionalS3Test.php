@@ -308,7 +308,10 @@ class FunctionalS3Test extends TestCase
         $errorOutput = $runProcess->getErrorOutput();
 
         $this->assertEmpty($output);
-        $this->assertContains('was not initialized for this KBC project', $errorOutput);
+        $this->assertStringMatchesFormat(
+            'Backup path "%s" was not initialized in the bucket "%s".',
+            trim($errorOutput)
+        );
     }
 
     public function testRegionErrorRun(): void

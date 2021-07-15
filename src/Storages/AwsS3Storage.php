@@ -19,17 +19,14 @@ class AwsS3Storage implements IStorage
 {
     private S3Config $config;
 
-    private string $backupId;
-
     private LoggerInterface $logger;
 
     public const FEDERATION_TOKEN_EXPIRATION_HOURS = 36;
 
-    public function __construct(S3Config $config, string $backupId, LoggerInterface $logger)
+    public function __construct(S3Config $config, LoggerInterface $logger)
     {
         $this->config = $config;
         $this->logger = $logger;
-        $this->backupId = $backupId;
     }
 
     public function generateTempReadCredentials(string $backupId, string $path): array
@@ -67,8 +64,9 @@ class AwsS3Storage implements IStorage
             if ($e->getAwsErrorCode() === 'NoSuchKey') {
                 throw new UserException(
                     sprintf(
-                        'Backup with ID "%s" was not initialized for this KBC project',
-                        $this->backupId
+                        'Backup path "%s" was not initialized in the bucket "%s".',
+                        $path,
+                        $this->config->getBucket()
                     )
                 );
             } else {
