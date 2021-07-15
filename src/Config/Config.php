@@ -50,7 +50,11 @@ class Config extends BaseConfig
 
     public function getPath(): string
     {
-        return $this->getValue(['parameters', 'backupPath'], '');
+        $path = (string) $this->getValue(['parameters', 'backupPath'], '');
+        if ($this->getStorageBackendType() === self::STORAGE_BACKEND_S3) {
+            return $path === '' ? '.' : rtrim($path, '/') . '/';
+        }
+        return $path;
     }
 
     public function getS3Config(): S3Config
