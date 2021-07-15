@@ -64,7 +64,7 @@ class AwsS3Storage implements IStorage
             if ($e->getAwsErrorCode() === 'NoSuchKey') {
                 throw new UserException(
                     sprintf(
-                        'Backup path "%s" was not initialized in the bucket "%s".',
+                        'Backup path "%s" not found in the bucket "%s".',
                         $path,
                         $this->config->getBucket()
                     )
