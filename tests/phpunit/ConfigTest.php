@@ -53,7 +53,7 @@ class ConfigTest extends TestCase
             [
                 'storageBackendType' => Config::STORAGE_BACKEND_S3,
             ],
-            '',
+            '.',
             false,
             Config::STORAGE_BACKEND_S3,
         ];
@@ -79,7 +79,7 @@ class ConfigTest extends TestCase
                 'region' => 'testRegion',
                 '#bucket' => 'testBucket',
             ],
-            '',
+            '.',
             false,
             Config::STORAGE_BACKEND_S3,
         ];
@@ -132,7 +132,7 @@ class ConfigTest extends TestCase
                 'region' => 'testRegion',
                 '#bucket' => 'testBucket',
             ],
-            '',
+            '.',
             true,
             Config::STORAGE_BACKEND_S3,
         ];
@@ -165,6 +165,38 @@ class ConfigTest extends TestCase
             'testPath',
             true,
             Config::STORAGE_BACKEND_ABS,
+        ];
+
+        yield 's3-add-missing-backslash-in-path' => [
+            [
+                'action' => 'run',
+                'parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_S3,
+                    'access_key_id' => 'testAccessKeyId',
+                    '#secret_access_key' => 'testAccessKey',
+                    'region' => 'testRegion',
+                    'backupPath' => 'testPath',
+                    '#bucket' => 'testBucket',
+                ],
+                'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_ABS,
+                    'accountName' => 'testAccountName',
+                    '#accountKey' => 'testAccountKey',
+                    'region' => 'testRegion',
+                ],
+            ],
+            [
+                'storageBackendType' => Config::STORAGE_BACKEND_S3,
+                'access_key_id' => 'testAccessKeyId',
+                '#secret_access_key' => 'testAccessKey',
+                'region' => 'testRegion',
+                '#bucket' => 'testBucket',
+                'backupPath' => 'testPath',
+
+            ],
+            'testPath/',
+            true,
+            Config::STORAGE_BACKEND_S3,
         ];
     }
 
