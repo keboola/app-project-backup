@@ -309,7 +309,7 @@ class FunctionalS3Test extends TestCase
 
         $this->assertEmpty($output);
         $this->assertStringMatchesFormat(
-            'Backup path "%s" was not initialized in the bucket "%s".',
+            'Backup path "%s" not found in the bucket "%s".',
             trim($errorOutput)
         );
     }
