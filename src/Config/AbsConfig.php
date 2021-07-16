@@ -16,7 +16,7 @@ class AbsConfig
     {
         $this->accountName = $params['accountName'];
         $this->accountKey = $params['#accountKey'];
-        $this->region = $params['region'];
+        $this->region = $params['region'] ?? '';
     }
 
     public function getAccountName(): string

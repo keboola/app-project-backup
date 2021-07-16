@@ -44,7 +44,7 @@ class ConfigDefinition extends BaseConfigDefinition
                 if (!empty($v['storageBackendType'])) {
                     switch ($v['storageBackendType']) {
                         case Config::STORAGE_BACKEND_ABS:
-                            foreach (['backupPath', 'accountName', '#accountKey', 'region'] as $item) {
+                            foreach (['backupPath', 'accountName', '#accountKey'] as $item) {
                                 if (empty($v[$item])) {
                                     throw new InvalidConfigurationException(sprintf(
                                         'Missing required parameter "%s".',

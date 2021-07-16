@@ -198,6 +198,33 @@ class ConfigTest extends TestCase
             true,
             Config::STORAGE_BACKEND_S3,
         ];
+
+        yield 'abs-config-without-region' => [
+            [
+                'action' => 'run',
+                'parameters' => [
+                    'backupPath' => 'testPath',
+                    'storageBackendType' => Config::STORAGE_BACKEND_ABS,
+                    'accountName' => 'testAccountName',
+                    '#accountKey' => 'testAccountKey',
+                ],
+                'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_S3,
+                    'access_key_id' => 'testAccessKeyId',
+                    '#secret_access_key' => 'testAccessKey',
+                    '#bucket' => 'testBucket',
+                ],
+            ],
+            [
+                'backupPath' => 'testPath',
+                'storageBackendType' => Config::STORAGE_BACKEND_ABS,
+                'accountName' => 'testAccountName',
+                '#accountKey' => 'testAccountKey',
+            ],
+            'testPath',
+            true,
+            Config::STORAGE_BACKEND_ABS,
+        ];
     }
 
     public function invalidConfigDataProvider(): Generator
@@ -249,22 +276,6 @@ class ConfigTest extends TestCase
                 ],
             ],
             'Missing required parameter "#accountKey".',
-        ];
-
-        yield 'abs-missing-region' => [
-            [
-                'action' => 'run',
-                'parameters' => [
-                    'backupPath' => 'testBackupPath',
-                    'storageBackendType' => Config::STORAGE_BACKEND_ABS,
-                    'accountName' => 'testAccountName',
-                    '#accountKey' => 'testAccountKey',
-                ],
-                'image_parameters' => [
-                    'storageBackendType' => Config::STORAGE_BACKEND_ABS,
-                ],
-            ],
-            'Missing required parameter "region".',
         ];
 
         yield 's3-missing-AccessKeyId' => [
