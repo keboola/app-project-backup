@@ -137,6 +137,7 @@ class AwsS3Storage implements IStorage
         return new S3Client([
             'version' => 'latest',
             'region' => $this->config->getRegion(),
+            'retries' => 6,
             'credentials' => [
                 'key' => $this->config->getAccessKeyId(),
                 'secret' => $this->config->getSecretAccessKey(),
