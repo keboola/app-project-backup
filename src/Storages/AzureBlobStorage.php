@@ -14,6 +14,7 @@ use MicrosoftAzure\Storage\Blob\BlobRestProxy;
 use MicrosoftAzure\Storage\Blob\BlobSharedAccessSignatureHelper;
 use MicrosoftAzure\Storage\Blob\Models\Container;
 use MicrosoftAzure\Storage\Common\Internal\Resources;
+use MicrosoftAzure\Storage\Common\Middlewares\RetryMiddleware;
 use MicrosoftAzure\Storage\Common\Middlewares\RetryMiddlewareFactory;
 use Psr\Log\LoggerInterface;
 
@@ -40,6 +41,7 @@ class AzureBlobStorage implements IStorage
             $this->config->getAccountName(),
             $this->config->getAccountKey()
         ));
+        $client->pushMiddleware(self::createRetryMiddleware());
         $client->createContainer($path);
 
         $sasHelper = new BlobSharedAccessSignatureHelper(
@@ -74,7 +76,7 @@ class AzureBlobStorage implements IStorage
             $this->config->getAccountName(),
             $this->config->getAccountKey()
         ));
-        $client->pushMiddleware(RetryMiddlewareFactory::create());
+        $client->pushMiddleware(self::createRetryMiddleware());
 
         $listContainers = array_map(fn(Container $v) => $v->getName(), $client->listContainers()->getContainers());
         if (!in_array($path, $listContainers)) {
@@ -101,5 +103,16 @@ class AzureBlobStorage implements IStorage
     {
         $path = str_replace('/', '-', $path);
         return rtrim($path, '-');
+    }
+
+    private static function createRetryMiddleware(): RetryMiddleware
+    {
+        return RetryMiddlewareFactory::create(
+            RetryMiddlewareFactory::GENERAL_RETRY_TYPE,
+            5,
+            1000,
+            RetryMiddlewareFactory::EXPONENTIAL_INTERVAL_ACCUMULATION,
+            true
+        );
     }
 }
