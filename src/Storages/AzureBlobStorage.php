@@ -109,8 +109,8 @@ class AzureBlobStorage implements IStorage
     {
         return RetryMiddlewareFactory::create(
             RetryMiddlewareFactory::GENERAL_RETRY_TYPE,
-            5,
-            1000,
+            20,
+            3000,
             RetryMiddlewareFactory::EXPONENTIAL_INTERVAL_ACCUMULATION,
             true
         );
