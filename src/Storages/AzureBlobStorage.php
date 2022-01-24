@@ -15,7 +15,6 @@ use MicrosoftAzure\Storage\Blob\BlobSharedAccessSignatureHelper;
 use MicrosoftAzure\Storage\Blob\Models\Container;
 use MicrosoftAzure\Storage\Common\Internal\Resources;
 use MicrosoftAzure\Storage\Common\Middlewares\RetryMiddleware;
-use MicrosoftAzure\Storage\Common\Middlewares\RetryMiddlewareFactory;
 use Psr\Log\LoggerInterface;
 
 class AzureBlobStorage implements IStorage
@@ -108,11 +107,9 @@ class AzureBlobStorage implements IStorage
     private static function createRetryMiddleware(): RetryMiddleware
     {
         return RetryMiddlewareFactory::create(
-            RetryMiddlewareFactory::GENERAL_RETRY_TYPE,
             20,
-            3000,
-            RetryMiddlewareFactory::EXPONENTIAL_INTERVAL_ACCUMULATION,
-            true
+            2000,
+            RetryMiddlewareFactory::EXPONENTIAL_INTERVAL_ACCUMULATION
         );
     }
 }
