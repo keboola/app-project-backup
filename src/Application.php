@@ -26,6 +26,7 @@ class Application
         'in.c-L1_RAW_PS_scenarios.scenario-execution-log',
         'in.c-L1_RAW_PS_scenarios.scenario_version',
         'in.c-L1_RAW_PS_stats.scenario_counter',
+        'in.c-L1_RAW_PS_scenarios.scenario-log2',
         'out.c-L2_PS_scenarios.scenario_version',
         'out.c-L2_PS_scenarios.scenario_log2',
         'out.c-L2_PS_scenarios.scenario_module_snapshot',
