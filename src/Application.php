@@ -32,6 +32,7 @@ class Application
         'out.c-L2_PS_scenarios.scenario_log2',
         'out.c-L2_PS_scenarios.scenario_version',
         'out.c-L2_PS_scenarios.scenario_execution_log',
+        'in.c-kds-team-ex-mixpanel-152770611.output',
     ];
 
     public function __construct(Config $config, LoggerInterface $logger)
