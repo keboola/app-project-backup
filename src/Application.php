@@ -22,17 +22,19 @@ class Application
     private LoggerInterface $logger;
 
     private array $excludeTables = [
-        'out.c-L2_P_stats.scenario_counter',
-        'out.c-3_org.org_scn_daily_stats',
-        'out.c-L2_PS_users.company_user_snapshot',
-        'out.c-L2_PS_users.user_snapshot',
-        'out.c-L2_PS_scenarios.scenario_snapshot',
-        'out.c-3_scn.scn_daily_stats',
-        'out.c-L2_PS_scenarios.scenario_module_snapshot',
-        'out.c-L2_PS_scenarios.scenario_log2',
-        'out.c-L2_PS_scenarios.scenario_version',
-        'out.c-L2_PS_scenarios.scenario_execution_log',
         'in.c-kds-team-ex-mixpanel-152770611.output',
+        'in.c-L1_RAW_PS_scenarios.scenario-execution-log',
+        'in.c-L1_RAW_PS_scenarios.scenario_version',
+        'in.c-L1_RAW_PS_stats.scenario_counter',
+        'out.c-L2_PS_scenarios.scenario_version',
+        'out.c-L2_PS_scenarios.scenario_log2',
+        'out.c-L2_PS_scenarios.scenario_module_snapshot',
+        'out.c-3_scn.scn_daily_stats',
+        'out.c-L2_PS_scenarios.scenario_snapshot',
+        'out.c-L2_PS_users.user_snapshot',
+        'out.c-L2_PS_users.company_user_snapshot',
+        'out.c-3_org.org_scn_daily_stats',
+        'out.c-L2_P_stats.scenario_counter',
     ];
 
     public function __construct(Config $config, LoggerInterface $logger)
