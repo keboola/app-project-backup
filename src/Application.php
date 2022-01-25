@@ -21,6 +21,19 @@ class Application
 
     private LoggerInterface $logger;
 
+    private array $excludeTables = [
+        'out.c-L2_P_stats.scenario_counter',
+        'out.c-3_org.org_scn_daily_stats',
+        'out.c-L2_PS_users.company_user_snapshot',
+        'out.c-L2_PS_users.user_snapshot',
+        'out.c-L2_PS_scenarios.scenario_snapshot',
+        'out.c-3_scn.scn_daily_stats',
+        'out.c-L2_PS_scenarios.scenario_module_snapshot',
+        'out.c-L2_PS_scenarios.scenario_log2',
+        'out.c-L2_PS_scenarios.scenario_version',
+        'out.c-L2_PS_scenarios.scenario_execution_log',
+    ];
+
     public function __construct(Config $config, LoggerInterface $logger)
     {
         $this->config = $config;
@@ -63,6 +76,9 @@ class Application
             $tables = $sapi->listTables();
             $tablesCount = count($tables);
             foreach ($tables as $i => $table) {
+                if (in_array($table['id'], $this->excludeTables)) {
+                    continue;
+                }
                 $this->logger->info(sprintf('Table %d/%d', $i + 1, $tablesCount));
                 $backup->backupTable($table['id']);
             }
