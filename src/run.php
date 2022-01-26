@@ -18,7 +18,7 @@ try {
         $app->run();
     } catch (StsException $e) {
         if (in_array($e->getAwsErrorCode(), ['InvalidClientTokenId', 'SignatureDoesNotMatch'], true)) {
-            throw new UserException($e->getAwsErrorMessage());
+            throw new UserException($e->getAwsErrorMessage() ?? $e->getMessage());
         }
 
         throw $e;

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Keboola\App\ProjectBackup\Tests;
 
@@ -121,5 +121,4 @@ class FunctionalS3WrongCredentialsTest extends TestCase
             'KBC_RUNID' => $this->testRunId,
         ]);
     }
-
 }
