@@ -449,16 +449,16 @@
         },
         {
             "name": "keboola/kbc-project-backup",
-            "version": "1.3.0",
+            "version": "1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/php-kbc-project-backup.git",
-                "reference": "8cd2f470160fac2089df3fac5c8b04a2d1305d56"
+                "reference": "afb406b193d5f48d14250c12453e3031ae6e18d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/php-kbc-project-backup/zipball/8cd2f470160fac2089df3fac5c8b04a2d1305d56",
-                "reference": "8cd2f470160fac2089df3fac5c8b04a2d1305d56",
+                "url": "https://api.github.com/repos/keboola/php-kbc-project-backup/zipball/afb406b193d5f48d14250c12453e3031ae6e18d0",
+                "reference": "afb406b193d5f48d14250c12453e3031ae6e18d0",
                 "shasum": ""
             },
             "require": {
@@ -493,9 +493,9 @@
             "description": "Backup KBC project",
             "support": {
                 "issues": "https://github.com/keboola/php-kbc-project-backup/issues",
-                "source": "https://github.com/keboola/php-kbc-project-backup/tree/1.3.0"
+                "source": "https://github.com/keboola/php-kbc-project-backup/tree/1.3.1"
             },
-            "time": "2022-01-17T20:52:45+00:00"
+            "time": "2022-01-26T14:32:14+00:00"
         },
         {
             "name": "keboola/php-component",
