@@ -41,7 +41,7 @@ class FunctionalS3WrongCredentialsTest extends TestCase
         $fileSystem->dumpFile(
             $this->temp->getTmpFolder() . '/config.json',
             (string) json_encode([
-                'action' => 'generate-read-credentials',
+                'action' => 'run',
                 'image_parameters' => [
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
@@ -70,7 +70,7 @@ class FunctionalS3WrongCredentialsTest extends TestCase
         $this->assertEmpty($output);
         $this->assertSame(
             'The request signature we calculated does not match the signature you provided. ' .
-            "Check your AWS Secret Access Key and signing method. Consult the service documentation for details.\n",
+            "Check your key and signing method.\n",
             $errorOutput
         );
     }
@@ -81,7 +81,7 @@ class FunctionalS3WrongCredentialsTest extends TestCase
         $fileSystem->dumpFile(
             $this->temp->getTmpFolder() . '/config.json',
             (string) json_encode([
-                'action' => 'generate-read-credentials',
+                'action' => 'run',
                 'image_parameters' => [
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID') . 'invalid',
@@ -108,7 +108,7 @@ class FunctionalS3WrongCredentialsTest extends TestCase
         $errorOutput = $runProcess->getErrorOutput();
 
         $this->assertEmpty($output);
-        $this->assertSame("The security token included in the request is invalid.\n", $errorOutput);
+        $this->assertSame("The AWS Access Key Id you provided does not exist in our records.\n", $errorOutput);
     }
 
     private function createTestProcess(): Process

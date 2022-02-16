@@ -41,7 +41,7 @@ class FunctionalAbsWrongCredentialsTest extends TestCase
         $fileSystem->dumpFile(
             $this->temp->getTmpFolder() . '/config.json',
             (string) json_encode([
-                'action' => 'generate-read-credentials',
+                'action' => 'run',
                 'image_parameters' => [
                     'storageBackendType' => Config::STORAGE_BACKEND_ABS,
                     'accountName' => getenv('TEST_AZURE_ACCOUNT_NAME'),
