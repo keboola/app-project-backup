@@ -111,6 +111,42 @@ class FunctionalS3WrongCredentialsTest extends TestCase
         $this->assertSame("The AWS Access Key Id you provided does not exist in our records.\n", $errorOutput);
     }
 
+    public function testWrongBucket(): void
+    {
+        $fileSystem = new Filesystem();
+        $fileSystem->dumpFile(
+            $this->temp->getTmpFolder() . '/config.json',
+            (string) json_encode([
+                'action' => 'run',
+                'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_S3,
+                    'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
+                    '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
+                    'region' => getenv('TEST_AWS_REGION'),
+                    '#bucket' => getenv('TEST_AWS_S3_BUCKET') . 'invalid',
+                ],
+            ])
+        );
+
+        $runProcess = $this->createTestProcess();
+        $exception = null;
+
+        try {
+            $runProcess->mustRun();
+        } catch (ProcessFailedException $e) {
+            $exception = $e;
+        }
+
+        $this->assertInstanceOf(ProcessFailedException::class, $exception);
+        $this->assertEquals(1, $runProcess->getExitCode());
+
+        $output = $runProcess->getOutput();
+        $errorOutput = $runProcess->getErrorOutput();
+
+        $this->assertEmpty($output);
+        $this->assertSame("The specified bucket does not exist\n", $errorOutput);
+    }
+
     private function createTestProcess(): Process
     {
         $runCommand = 'php /code/src/run.php';
