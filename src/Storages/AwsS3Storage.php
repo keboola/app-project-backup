@@ -7,6 +7,7 @@ namespace Keboola\App\ProjectBackup\Storages;
 use Aws\Result;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
+use Aws\Sts\Exception\StsException;
 use Aws\Sts\StsClient;
 use Keboola\App\ProjectBackup\Config\S3Config;
 use Keboola\Component\UserException;
@@ -34,7 +35,15 @@ class AwsS3Storage implements IStorage
 
     public function generateTempReadCredentials(string $backupId, string $path): array
     {
-        $federationToken = $this->generateFederationToken($path);
+        try {
+            $federationToken = $this->generateFederationToken($path);
+        } catch (StsException $e) {
+            if (in_array($e->getAwsErrorCode(), ['InvalidClientTokenId', 'SignatureDoesNotMatch'], true)) {
+                throw new UserException($e->getAwsErrorMessage() ?? $e->getMessage());
+            }
+
+            throw $e;
+        }
 
         $result = $this->createBackupPath($path);
 
@@ -74,7 +83,7 @@ class AwsS3Storage implements IStorage
                     );
                 }
             } else {
-                throw $e;
+                throw new UserException($e->getAwsErrorMessage() ?? $e->getMessage());
             }
         }
 

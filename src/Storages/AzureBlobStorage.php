@@ -13,6 +13,7 @@ use Keboola\StorageApi\Client;
 use MicrosoftAzure\Storage\Blob\BlobRestProxy;
 use MicrosoftAzure\Storage\Blob\BlobSharedAccessSignatureHelper;
 use MicrosoftAzure\Storage\Blob\Models\Container;
+use MicrosoftAzure\Storage\Common\Exceptions\ServiceException;
 use MicrosoftAzure\Storage\Common\Internal\Resources;
 use MicrosoftAzure\Storage\Common\Middlewares\RetryMiddleware;
 use MicrosoftAzure\Storage\Common\Middlewares\RetryMiddlewareFactory;
@@ -78,7 +79,15 @@ class AzureBlobStorage implements IStorage
         ));
         $client->pushMiddleware(self::createRetryMiddleware());
 
-        $listContainers = array_map(fn(Container $v) => $v->getName(), $client->listContainers()->getContainers());
+        try {
+            $listContainers = array_map(fn(Container $v) => $v->getName(), $client->listContainers()->getContainers());
+        } catch (ServiceException $e) {
+            if ($e->getCode() === 403) {
+                throw new UserException($e->getErrorMessage());
+            }
+
+            throw $e;
+        }
         if (!in_array($path, $listContainers)) {
             throw new UserException(sprintf(
                 'The specified container "%s" does not exist.',

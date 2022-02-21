@@ -41,7 +41,7 @@ class FunctionalS3WrongCredentialsTest extends TestCase
         $fileSystem->dumpFile(
             $this->temp->getTmpFolder() . '/config.json',
             (string) json_encode([
-                'action' => 'generate-read-credentials',
+                'action' => 'run',
                 'image_parameters' => [
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
@@ -70,7 +70,7 @@ class FunctionalS3WrongCredentialsTest extends TestCase
         $this->assertEmpty($output);
         $this->assertSame(
             'The request signature we calculated does not match the signature you provided. ' .
-            "Check your AWS Secret Access Key and signing method. Consult the service documentation for details.\n",
+            "Check your key and signing method.\n",
             $errorOutput
         );
     }
@@ -81,7 +81,7 @@ class FunctionalS3WrongCredentialsTest extends TestCase
         $fileSystem->dumpFile(
             $this->temp->getTmpFolder() . '/config.json',
             (string) json_encode([
-                'action' => 'generate-read-credentials',
+                'action' => 'run',
                 'image_parameters' => [
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID') . 'invalid',
@@ -108,7 +108,43 @@ class FunctionalS3WrongCredentialsTest extends TestCase
         $errorOutput = $runProcess->getErrorOutput();
 
         $this->assertEmpty($output);
-        $this->assertSame("The security token included in the request is invalid.\n", $errorOutput);
+        $this->assertSame("The AWS Access Key Id you provided does not exist in our records.\n", $errorOutput);
+    }
+
+    public function testWrongBucket(): void
+    {
+        $fileSystem = new Filesystem();
+        $fileSystem->dumpFile(
+            $this->temp->getTmpFolder() . '/config.json',
+            (string) json_encode([
+                'action' => 'run',
+                'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_S3,
+                    'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
+                    '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
+                    'region' => getenv('TEST_AWS_REGION'),
+                    '#bucket' => getenv('TEST_AWS_S3_BUCKET') . 'invalid',
+                ],
+            ])
+        );
+
+        $runProcess = $this->createTestProcess();
+        $exception = null;
+
+        try {
+            $runProcess->mustRun();
+        } catch (ProcessFailedException $e) {
+            $exception = $e;
+        }
+
+        $this->assertInstanceOf(ProcessFailedException::class, $exception);
+        $this->assertEquals(1, $runProcess->getExitCode());
+
+        $output = $runProcess->getOutput();
+        $errorOutput = $runProcess->getErrorOutput();
+
+        $this->assertEmpty($output);
+        $this->assertSame("The specified bucket does not exist\n", $errorOutput);
     }
 
     private function createTestProcess(): Process
