@@ -6,11 +6,11 @@ namespace Keboola\App\ProjectBackup\Tests;
 
 use Keboola\App\ProjectBackup\Config\Config;
 use Keboola\Csv\CsvFile;
+use Keboola\FileStorage\Abs\ClientFactory;
 use Keboola\StorageApi\Client as StorageApi;
 use Keboola\StorageApi\Components;
 use Keboola\StorageApi\Options\Components\Configuration;
 use Keboola\Temp\Temp;
-use MicrosoftAzure\Storage\Blob\BlobRestProxy;
 use MicrosoftAzure\Storage\Common\Exceptions\ServiceException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
@@ -81,7 +81,7 @@ class FunctionalAbsTest extends TestCase
         $this->assertArrayHasKey('credentials', $outputData);
         $this->assertArrayHasKey('connectionString', $outputData['credentials']);
 
-        $readClient = BlobRestProxy::createBlobService($outputData['credentials']['connectionString']);
+        $readClient = ClientFactory::createClientFromConnectionString($outputData['credentials']['connectionString']);
 
         // read permissions
         $readClient->listBlobs($outputData['container']);
