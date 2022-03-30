@@ -77,11 +77,14 @@ class FunctionalAbsWrongCredentialsTest extends TestCase
     private function createTestProcess(): Process
     {
         $runCommand = 'php /code/src/run.php';
-        return Process::fromShellCommandline($runCommand, null, [
+        $process = Process::fromShellCommandline($runCommand, null, [
             'KBC_DATADIR' => $this->temp->getTmpFolder(),
             'KBC_URL' => getenv('TEST_AZURE_STORAGE_API_URL'),
             'KBC_TOKEN' => getenv('TEST_AZURE_STORAGE_API_TOKEN'),
             'KBC_RUNID' => $this->testRunId,
         ]);
+        $process->setTimeout(300);
+
+        return $process;
     }
 }

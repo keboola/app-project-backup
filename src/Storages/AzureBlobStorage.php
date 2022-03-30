@@ -7,16 +7,14 @@ namespace Keboola\App\ProjectBackup\Storages;
 use DateTime;
 use Keboola\App\ProjectBackup\Config\AbsConfig;
 use Keboola\Component\UserException;
+use Keboola\FileStorage\Abs\ClientFactory;
 use Keboola\ProjectBackup\AbsBackup;
 use Keboola\ProjectBackup\Backup;
 use Keboola\StorageApi\Client;
-use MicrosoftAzure\Storage\Blob\BlobRestProxy;
 use MicrosoftAzure\Storage\Blob\BlobSharedAccessSignatureHelper;
 use MicrosoftAzure\Storage\Blob\Models\Container;
 use MicrosoftAzure\Storage\Common\Exceptions\ServiceException;
 use MicrosoftAzure\Storage\Common\Internal\Resources;
-use MicrosoftAzure\Storage\Common\Middlewares\RetryMiddleware;
-use MicrosoftAzure\Storage\Common\Middlewares\RetryMiddlewareFactory;
 use Psr\Log\LoggerInterface;
 
 class AzureBlobStorage implements IStorage
@@ -37,12 +35,12 @@ class AzureBlobStorage implements IStorage
     {
         $path = $this->modifyPath($path);
 
-        $client = BlobRestProxy::createBlobService(sprintf(
+        $connectionString = sprintf(
             'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net',
             $this->config->getAccountName(),
             $this->config->getAccountKey()
-        ));
-        $client->pushMiddleware(self::createRetryMiddleware());
+        );
+        $client = ClientFactory::createClientFromConnectionString($connectionString);
         $client->createContainer($path);
 
         $sasHelper = new BlobSharedAccessSignatureHelper(
@@ -72,12 +70,12 @@ class AzureBlobStorage implements IStorage
     public function getBackup(Client $sapi, string $path): Backup
     {
         $path = $this->modifyPath($path);
-        $client = BlobRestProxy::createBlobService(sprintf(
+        $connectionString = sprintf(
             'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net',
             $this->config->getAccountName(),
             $this->config->getAccountKey()
-        ));
-        $client->pushMiddleware(self::createRetryMiddleware());
+        );
+        $client = ClientFactory::createClientFromConnectionString($connectionString);
 
         try {
             $listContainers = array_map(fn(Container $v) => $v->getName(), $client->listContainers()->getContainers());
@@ -112,16 +110,5 @@ class AzureBlobStorage implements IStorage
     {
         $path = str_replace('/', '-', $path);
         return rtrim($path, '-');
-    }
-
-    private static function createRetryMiddleware(): RetryMiddleware
-    {
-        return RetryMiddlewareFactory::create(
-            RetryMiddlewareFactory::GENERAL_RETRY_TYPE,
-            5,
-            1000,
-            RetryMiddlewareFactory::EXPONENTIAL_INTERVAL_ACCUMULATION,
-            true
-        );
     }
 }
