@@ -68,7 +68,7 @@ class Application
             }
         }
 
-        $backup->backupConfigs($this->config->includeVersions());
+        //$backup->backupConfigs($this->config->includeVersions());
     }
 
     public function generateReadCredentials(): array
