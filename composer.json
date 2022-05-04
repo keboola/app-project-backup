@@ -37,8 +37,7 @@
         "build": [
             "@phplint",
             "@phpcs",
-            "@phpstan",
-            "@tests"
+            "@phpstan"
         ],
         "ci": [
             "@composer validate --no-check-publish --no-check-all",
