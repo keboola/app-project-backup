@@ -453,12 +453,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/php-kbc-project-backup.git",
-                "reference": "6312574d289ce28c82eb48fa866e2a67c5030adb"
+                "reference": "c24535250d300373aa742fbab1ffb644b9142f3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/php-kbc-project-backup/zipball/6312574d289ce28c82eb48fa866e2a67c5030adb",
-                "reference": "6312574d289ce28c82eb48fa866e2a67c5030adb",
+                "url": "https://api.github.com/repos/keboola/php-kbc-project-backup/zipball/c24535250d300373aa742fbab1ffb644b9142f3c",
+                "reference": "c24535250d300373aa742fbab1ffb644b9142f3c",
                 "shasum": ""
             },
             "require": {
@@ -496,7 +496,7 @@
                 "issues": "https://github.com/keboola/php-kbc-project-backup/issues",
                 "source": "https://github.com/keboola/php-kbc-project-backup/tree/ondra-backup-only-storage"
             },
-            "time": "2022-05-05T05:37:22+00:00"
+            "time": "2022-07-20T11:13:25+00:00"
         },
         {
             "name": "keboola/php-component",
