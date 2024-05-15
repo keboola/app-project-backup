@@ -73,7 +73,6 @@ class Application
 
     public function generateReadCredentials(): array
     {
-        return ['ahoj'];
         $sapi = $this->initSapi();
         /** @var string */
         $backupId = $sapi->generateId();
@@ -82,6 +81,7 @@ class Application
         } else {
             $path = $this->generateBackupPath((int) $backupId, $sapi);
         }
+        return [$backupId, $path];
 
         return $this->storageBackend->generateTempReadCredentials($backupId, $path);
     }
