@@ -76,6 +76,7 @@ class Application
         $sapi = $this->initSapi();
         /** @var string */
         $backupId = $sapi->generateId();
+        return [$backupId];
         if ($this->config->isUserDefinedCredentials()) {
             $path = $this->config->getPath();
         } else {
