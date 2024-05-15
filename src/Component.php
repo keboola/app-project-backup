@@ -16,7 +16,7 @@ class Component extends BaseComponent
         $config = $this->getConfig();
 
         $application = new Application($config, $this->getLogger());
-
+        echo json_encode([$config->getAction()]);return;
         switch ($config->getAction()) {
             case 'run':
                 $application->run();
