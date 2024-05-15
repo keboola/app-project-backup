@@ -12,6 +12,8 @@ class Component extends BaseComponent
 {
     public function run(): void
     {
+        echo json_encode(['abcdefg' => 'hijklmn']);
+        return;
         /** @var Config $config */
         $config = $this->getConfig();
 
