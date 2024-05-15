@@ -73,10 +73,10 @@ class Application
 
     public function generateReadCredentials(): array
     {
+        return ['ahoj'];
         $sapi = $this->initSapi();
         /** @var string */
         $backupId = $sapi->generateId();
-        return [$backupId];
         if ($this->config->isUserDefinedCredentials()) {
             $path = $this->config->getPath();
         } else {
