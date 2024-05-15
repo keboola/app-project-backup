@@ -76,12 +76,12 @@ class Application
         $sapi = $this->initSapi();
         /** @var string */
         $backupId = $sapi->generateId();
+        return [$backupId];
         if ($this->config->isUserDefinedCredentials()) {
             $path = $this->config->getPath();
         } else {
             $path = $this->generateBackupPath((int) $backupId, $sapi);
         }
-        return [$backupId, $path];
 
         return $this->storageBackend->generateTempReadCredentials($backupId, $path);
     }
