@@ -57,6 +57,7 @@ class Application
 
         $backup = $this->storageBackend->getBackup($sapi, $path);
 
+        $backup->backupProjectMetadata();
         $backup->backupTablesMetadata();
 
         if (!$this->config->exportStructureOnly()) {
