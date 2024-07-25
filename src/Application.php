@@ -70,6 +70,7 @@ class Application
         }
 
         $backup->backupConfigs($this->config->includeVersions());
+        $backup->backupPermanentFiles();
     }
 
     public function generateReadCredentials(): array

@@ -155,6 +155,7 @@ class FunctionalAbsTest extends TestCase
         $this->assertContains('Exporting buckets', $output);
         $this->assertContains('Exporting tables', $output);
         $this->assertContains('Exporting configurations', $output);
+        $this->assertContains('Exporting permanent files', $output);
 
         $events = $this->sapiClient->listEvents(['runId' => $this->testRunId]);
         self::assertGreaterThan(0, count($events));
