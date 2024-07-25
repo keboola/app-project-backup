@@ -215,7 +215,7 @@ class FunctionalS3Test extends TestCase
         $file = $tmp->createFile('testStructureOnly.csv');
         file_put_contents($file->getPathname(), 'a,b,c,d,e,f');
 
-        $csvFile = new CsvFile($file);
+        $csvFile = new CsvFile($file->getPathname());
 
         $this->sapiClient->createBucket('test-bucket', 'out');
         $this->sapiClient->createTable('out.c-test-bucket', 'test-table', $csvFile);
