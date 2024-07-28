@@ -198,6 +198,7 @@ class FunctionalS3Test extends TestCase
         $this->assertContains('Exporting buckets', $output);
         $this->assertContains('Exporting tables', $output);
         $this->assertContains('Exporting configurations', $output);
+        $this->assertContains('Exporting permanent files', $output);
 
         $events = $this->sapiClient->listEvents(['runId' => $this->testRunId]);
         self::assertGreaterThan(0, count($events));
@@ -214,7 +215,7 @@ class FunctionalS3Test extends TestCase
         $file = $tmp->createFile('testStructureOnly.csv');
         file_put_contents($file->getPathname(), 'a,b,c,d,e,f');
 
-        $csvFile = new CsvFile($file);
+        $csvFile = new CsvFile($file->getPathname());
 
         $this->sapiClient->createBucket('test-bucket', 'out');
         $this->sapiClient->createTable('out.c-test-bucket', 'test-table', $csvFile);
