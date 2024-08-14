@@ -30,7 +30,6 @@ class FunctionalAbsTest extends TestCase
         parent::setUp();
 
         $this->temp = new Temp('project-backup');
-        $this->temp->initRunFolder();
 
         $this->sapiClient = new StorageApi([
             'url' => getenv('TEST_AZURE_STORAGE_API_URL'),
@@ -64,7 +63,7 @@ class FunctionalAbsTest extends TestCase
                     '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
                     'region' => getenv('TEST_AZURE_REGION'),
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -73,6 +72,7 @@ class FunctionalAbsTest extends TestCase
         $this->assertEmpty($runProcess->getErrorOutput());
 
         $output = $runProcess->getOutput();
+        /** @var array $outputData */
         $outputData = json_decode($output, true);
 
         $this->assertArrayHasKey('backupId', $outputData);
@@ -93,7 +93,7 @@ class FunctionalAbsTest extends TestCase
         } catch (ServiceException $e) {
             $this->assertStringContainsString(
                 'This request is not authorized to perform this operation using this permission',
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
     }
@@ -116,7 +116,7 @@ class FunctionalAbsTest extends TestCase
                     '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
                     'region' => getenv('TEST_AZURE_REGION'),
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -125,6 +125,7 @@ class FunctionalAbsTest extends TestCase
         $this->assertEmpty($runProcess->getErrorOutput());
 
         $output = $runProcess->getOutput();
+        /** @var array $outputData */
         $outputData = json_decode($output, true);
 
         $this->assertArrayHasKey('backupId', $outputData);
@@ -143,7 +144,7 @@ class FunctionalAbsTest extends TestCase
                     '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
                     'region' => getenv('TEST_AZURE_REGION'),
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -151,6 +152,7 @@ class FunctionalAbsTest extends TestCase
 
         $this->assertEmpty($runProcess->getErrorOutput());
 
+        /** @var iterable $output */
         $output = $runProcess->getOutput();
         $this->assertContains('Exporting buckets', $output);
         $this->assertContains('Exporting tables', $output);
@@ -167,7 +169,6 @@ class FunctionalAbsTest extends TestCase
         self::assertCount(0, $events);
 
         $tmp = new Temp();
-        $tmp->initRunFolder();
 
         $file = $tmp->createFile('testStructureOnly.csv');
         file_put_contents($file->getPathname(), 'a,b,c,d,e,f');
@@ -190,7 +191,7 @@ class FunctionalAbsTest extends TestCase
                     '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
                     'region' => getenv('TEST_AZURE_REGION'),
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -199,6 +200,7 @@ class FunctionalAbsTest extends TestCase
         $this->assertEmpty($runProcess->getErrorOutput());
 
         $output = $runProcess->getOutput();
+        /** @var array $outputData */
         $outputData = json_decode($output, true);
 
         $this->assertArrayHasKey('backupId', $outputData);
@@ -218,7 +220,7 @@ class FunctionalAbsTest extends TestCase
                     '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
                     'region' => getenv('TEST_AZURE_REGION'),
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -226,6 +228,7 @@ class FunctionalAbsTest extends TestCase
 
         $this->assertEmpty($runProcess->getErrorOutput());
 
+        /** @var iterable $output */
         $output = $runProcess->getOutput();
         $this->assertContains('Exporting buckets', $output);
         $this->assertContains('Exporting tables', $output);
@@ -252,7 +255,7 @@ class FunctionalAbsTest extends TestCase
                     '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
                     'region' => getenv('TEST_AZURE_REGION'),
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -284,7 +287,7 @@ class FunctionalAbsTest extends TestCase
                     '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
                     'region' => 'unknown-custom-region',
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -293,6 +296,7 @@ class FunctionalAbsTest extends TestCase
         $this->assertEquals(2, $runProcess->getExitCode());
 
         $output = $runProcess->getOutput();
+        /** @var iterable $errorOutput */
         $errorOutput = $runProcess->getErrorOutput();
 
         $this->assertEmpty($output);

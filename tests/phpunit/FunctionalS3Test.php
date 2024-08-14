@@ -19,27 +19,17 @@ use Symfony\Component\Process\Process;
 
 class FunctionalS3Test extends TestCase
 {
-    /**
-     * @var Temp
-     */
-    protected $temp;
+    protected Temp $temp;
 
-    /**
-     * @var StorageApi
-     */
-    protected $sapiClient;
+    protected StorageApi $sapiClient;
 
-    /**
-     * @var string
-     */
-    private $testRunId;
+    private string $testRunId;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->temp = new Temp('project-backup');
-        $this->temp->initRunFolder();
 
         $this->sapiClient = new StorageApi([
             'url' => getenv('TEST_STORAGE_API_URL'),
@@ -75,7 +65,7 @@ class FunctionalS3Test extends TestCase
                     'region' => getenv('TEST_AWS_REGION'),
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -84,7 +74,8 @@ class FunctionalS3Test extends TestCase
         $this->assertEmpty($runProcess->getErrorOutput());
 
         $output = $runProcess->getOutput();
-        $outputData = \json_decode($output, true);
+        /** @var array $outputData */
+        $outputData = json_decode($output, true);
 
         $this->assertArrayHasKey('backupId', $outputData);
         $this->assertArrayHasKey('backupUri', $outputData);
@@ -96,6 +87,7 @@ class FunctionalS3Test extends TestCase
         $this->assertArrayHasKey('expiration', $outputData['credentials']);
 
         $uriParser = new S3UriParser();
+        /** @var array $uriParts */
         $uriParts = $uriParser->parse($outputData['backupUri']);
 
         $readS3Client = new S3Client([
@@ -158,7 +150,7 @@ class FunctionalS3Test extends TestCase
                     'region' => getenv('TEST_AWS_REGION'),
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -167,7 +159,8 @@ class FunctionalS3Test extends TestCase
         $this->assertEmpty($runProcess->getErrorOutput());
 
         $output = $runProcess->getOutput();
-        $outputData = \json_decode($output, true);
+        /** @var array $outputData */
+        $outputData = json_decode($output, true);
 
         $this->assertArrayHasKey('backupId', $outputData);
 
@@ -186,7 +179,7 @@ class FunctionalS3Test extends TestCase
                     'region' => getenv('TEST_AWS_REGION'),
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -194,6 +187,7 @@ class FunctionalS3Test extends TestCase
 
         $this->assertEmpty($runProcess->getErrorOutput());
 
+        /** @var iterable $output */
         $output = $runProcess->getOutput();
         $this->assertContains('Exporting buckets', $output);
         $this->assertContains('Exporting tables', $output);
@@ -210,7 +204,6 @@ class FunctionalS3Test extends TestCase
         self::assertCount(0, $events);
 
         $tmp = new Temp();
-        $tmp->initRunFolder();
 
         $file = $tmp->createFile('testStructureOnly.csv');
         file_put_contents($file->getPathname(), 'a,b,c,d,e,f');
@@ -218,7 +211,7 @@ class FunctionalS3Test extends TestCase
         $csvFile = new CsvFile($file->getPathname());
 
         $this->sapiClient->createBucket('test-bucket', 'out');
-        $this->sapiClient->createTable('out.c-test-bucket', 'test-table', $csvFile);
+        $this->sapiClient->createTableAsync('out.c-test-bucket', 'test-table', $csvFile);
 
         $fileSystem = new Filesystem();
 
@@ -234,7 +227,7 @@ class FunctionalS3Test extends TestCase
                     'region' => getenv('TEST_AWS_REGION'),
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -243,7 +236,8 @@ class FunctionalS3Test extends TestCase
         $this->assertEmpty($runProcess->getErrorOutput());
 
         $output = $runProcess->getOutput();
-        $outputData = \json_decode($output, true);
+        /** @var array $outputData */
+        $outputData = json_decode($output, true);
 
         $this->assertArrayHasKey('backupId', $outputData);
 
@@ -263,7 +257,7 @@ class FunctionalS3Test extends TestCase
                     'region' => getenv('TEST_AWS_REGION'),
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -271,6 +265,7 @@ class FunctionalS3Test extends TestCase
 
         $this->assertEmpty($runProcess->getErrorOutput());
 
+        /** @var iterable $output */
         $output = $runProcess->getOutput();
         $this->assertContains('Exporting buckets', $output);
         $this->assertContains('Exporting tables', $output);
@@ -298,7 +293,7 @@ class FunctionalS3Test extends TestCase
                     'region' => getenv('TEST_AWS_REGION'),
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -312,7 +307,7 @@ class FunctionalS3Test extends TestCase
         $this->assertEmpty($output);
         $this->assertStringMatchesFormat(
             'Backup path "%s" not found in the bucket "%s".',
-            trim($errorOutput)
+            trim($errorOutput),
         );
     }
 
@@ -338,7 +333,7 @@ class FunctionalS3Test extends TestCase
                     'region' => '',
                     '#bucket' => '',
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -380,7 +375,7 @@ class FunctionalS3Test extends TestCase
                     'region' => 'unknown-custom-region',
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -389,6 +384,7 @@ class FunctionalS3Test extends TestCase
         $this->assertEquals(2, $runProcess->getExitCode());
 
         $output = $runProcess->getOutput();
+        /** @var iterable $errorOutput */
         $errorOutput = $runProcess->getErrorOutput();
 
         $this->assertEmpty($output);
@@ -451,7 +447,7 @@ class FunctionalS3Test extends TestCase
                 [
                     'Bucket' => getenv('TEST_AWS_S3_BUCKET'),
                     'Delete' => ['Objects' => $objects['Contents']],
-                ]
+                ],
             );
         }
     }

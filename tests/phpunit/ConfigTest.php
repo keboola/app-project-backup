@@ -20,7 +20,7 @@ class ConfigTest extends TestCase
         array $expectedCredentialsParameters,
         string $expectedPath,
         bool $expectedIsUserDefinedCredentials,
-        string $expectedStorageBackendType
+        string $expectedStorageBackendType,
     ): void {
         $config = new Config($configArray, new ConfigDefinition());
 

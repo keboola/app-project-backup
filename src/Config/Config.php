@@ -14,12 +14,12 @@ class Config extends BaseConfig
 
     public function getBackupId(): string
     {
-        return $this->getValue(['parameters', 'backupId'], '');
+        return $this->getStringValue(['parameters', 'backupId'], '');
     }
 
     public function getStorageBackendType(): string
     {
-        $storageBackendType = $this->getValue(['parameters', 'storageBackendType'], '');
+        $storageBackendType = $this->getStringValue(['parameters', 'storageBackendType'], '');
         if (!empty($storageBackendType)) {
             return $storageBackendType;
         }
@@ -28,12 +28,16 @@ class Config extends BaseConfig
 
     public function exportStructureOnly(): bool
     {
-        return $this->getValue(['parameters', 'exportStructureOnly'], false);
+        /** @var bool $val */
+        $val = $this->getValue(['parameters', 'exportStructureOnly'], false);
+        return $val;
     }
 
     public function includeVersions(): bool
     {
-        return $this->getValue(['parameters', 'includeVersions'], false);
+        /** @var bool $val */
+        $val = $this->getValue(['parameters', 'includeVersions'], false);
+        return $val;
     }
 
     public function isUserDefinedCredentials(): bool
@@ -50,7 +54,8 @@ class Config extends BaseConfig
 
     public function getPath(): string
     {
-        $path = (string) $this->getValue(['parameters', 'backupPath'], '');
+        /** @var string $path */
+        $path = $this->getValue(['parameters', 'backupPath'], '');
         if ($this->getStorageBackendType() === self::STORAGE_BACKEND_S3) {
             return $path === '' ? '.' : rtrim($path, '/') . '/';
         }

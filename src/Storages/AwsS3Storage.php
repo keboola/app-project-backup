@@ -36,6 +36,7 @@ class AwsS3Storage implements IStorage
     public function generateTempReadCredentials(string $backupId, string $path): array
     {
         try {
+            /** @var array $federationToken */
             $federationToken = $this->generateFederationToken($path);
         } catch (StsException $e) {
             if (in_array($e->getAwsErrorCode(), ['InvalidClientTokenId', 'SignatureDoesNotMatch'], true)) {
@@ -78,8 +79,8 @@ class AwsS3Storage implements IStorage
                         sprintf(
                             'Backup path "%s" not found in the bucket "%s".',
                             $path,
-                            $this->config->getBucket()
-                        )
+                            $this->config->getBucket(),
+                        ),
                     );
                 }
             } else {
@@ -92,7 +93,7 @@ class AwsS3Storage implements IStorage
             $s3Client,
             $this->config->getBucket(),
             $path,
-            $this->logger
+            $this->logger,
         );
     }
 

@@ -38,14 +38,14 @@ class AzureBlobStorage implements IStorage
         $connectionString = sprintf(
             'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net',
             $this->config->getAccountName(),
-            $this->config->getAccountKey()
+            $this->config->getAccountKey(),
         );
         $client = ClientFactory::createClientFromConnectionString($connectionString);
         $client->createContainer($path);
 
         $sasHelper = new BlobSharedAccessSignatureHelper(
             $this->config->getAccountName(),
-            $this->config->getAccountKey()
+            $this->config->getAccountKey(),
         );
 
         $expirationDate = (new DateTime())->modify('+' . self::SAS_DEFAULT_EXPIRATION_HOURS . 'hour');
@@ -54,7 +54,7 @@ class AzureBlobStorage implements IStorage
             $path,
             'rl',
             $expirationDate,
-            new DateTime('now')
+            new DateTime('now'),
         );
 
         return [
@@ -73,7 +73,7 @@ class AzureBlobStorage implements IStorage
         $connectionString = sprintf(
             'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net',
             $this->config->getAccountName(),
-            $this->config->getAccountKey()
+            $this->config->getAccountKey(),
         );
         $client = ClientFactory::createClientFromConnectionString($connectionString);
 
@@ -89,7 +89,7 @@ class AzureBlobStorage implements IStorage
         if (!in_array($path, $listContainers)) {
             throw new UserException(sprintf(
                 'The specified container "%s" does not exist.',
-                $path
+                $path,
             ));
         }
 
@@ -102,7 +102,7 @@ class AzureBlobStorage implements IStorage
             '%s=https://%s.blob.core.windows.net;SharedAccessSignature=%s',
             Resources::BLOB_ENDPOINT_NAME,
             $this->config->getAccountName(),
-            $sasToken
+            $sasToken,
         );
     }
 
