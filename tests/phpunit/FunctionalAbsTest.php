@@ -152,12 +152,11 @@ class FunctionalAbsTest extends TestCase
 
         $this->assertEmpty($runProcess->getErrorOutput());
 
-        /** @var iterable $output */
         $output = $runProcess->getOutput();
-        $this->assertContains('Exporting buckets', $output);
-        $this->assertContains('Exporting tables', $output);
-        $this->assertContains('Exporting configurations', $output);
-        $this->assertContains('Exporting permanent files', $output);
+        $this->assertStringContainsString('Exporting buckets', $output);
+        $this->assertStringContainsString('Exporting tables', $output);
+        $this->assertStringContainsString('Exporting configurations', $output);
+        $this->assertStringContainsString('Exporting permanent files', $output);
 
         $events = $this->sapiClient->listEvents(['runId' => $this->testRunId]);
         self::assertGreaterThan(0, count($events));
@@ -228,12 +227,11 @@ class FunctionalAbsTest extends TestCase
 
         $this->assertEmpty($runProcess->getErrorOutput());
 
-        /** @var iterable $output */
         $output = $runProcess->getOutput();
-        $this->assertContains('Exporting buckets', $output);
-        $this->assertContains('Exporting tables', $output);
-        $this->assertContains('Exporting configurations', $output);
-        $this->assertNotContains('Table ', $output);
+        $this->assertStringContainsString('Exporting buckets', $output);
+        $this->assertStringContainsString('Exporting tables', $output);
+        $this->assertStringContainsString('Exporting configurations', $output);
+        $this->assertStringNotContainsString('Table ', $output);
 
         $events = $this->sapiClient->listEvents(['runId' => $this->testRunId]);
         self::assertGreaterThan(0, count($events));
@@ -296,12 +294,11 @@ class FunctionalAbsTest extends TestCase
         $this->assertEquals(2, $runProcess->getExitCode());
 
         $output = $runProcess->getOutput();
-        /** @var iterable $errorOutput */
         $errorOutput = $runProcess->getErrorOutput();
 
         $this->assertEmpty($output);
-        $this->assertContains('is not located in', $errorOutput);
-        $this->assertContains('unknown-custom-region', $errorOutput);
+        $this->assertStringContainsString('is not located in', $errorOutput);
+        $this->assertStringContainsString('unknown-custom-region', $errorOutput);
     }
 
     private function cleanupKbcProject(): void
