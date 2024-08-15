@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8ba8962c5a2d6ff947174662979596a6",
+    "content-hash": "532a9b6e94c624ece28110edf240315b",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1216,16 +1216,16 @@
         },
         {
             "name": "keboola/kbc-project-backup",
-            "version": "dev-ondra-update-php",
+            "version": "1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/php-kbc-project-backup.git",
-                "reference": "8a9d1cd7027f27050e17dee64059f54c481604ea"
+                "reference": "ce4d842827702126961a7eb6ee0dd8a00de04770"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/php-kbc-project-backup/zipball/8a9d1cd7027f27050e17dee64059f54c481604ea",
-                "reference": "8a9d1cd7027f27050e17dee64059f54c481604ea",
+                "url": "https://api.github.com/repos/keboola/php-kbc-project-backup/zipball/ce4d842827702126961a7eb6ee0dd8a00de04770",
+                "reference": "ce4d842827702126961a7eb6ee0dd8a00de04770",
                 "shasum": ""
             },
             "require": {
@@ -1237,12 +1237,21 @@
                 "php": "^8.2"
             },
             "require-dev": {
+                "cweagans/composer-patches": "^1.7",
                 "keboola/coding-standard": "^15.0",
                 "php-parallel-lint/php-parallel-lint": "^1.4",
                 "phpstan/phpstan": "^1.11",
-                "phpunit/phpunit": "^11.3"
+                "phpunit/phpunit": "^11.3",
+                "symplify/vendor-patches": "^11.3"
             },
             "type": "library",
+            "extra": {
+                "patches": {
+                    "microsoft/azure-storage-common": [
+                        "patches/microsoft-azure-storage-common-src-common-internal-servicerestproxy-php.patch"
+                    ]
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Keboola\\ProjectBackup\\": "src/"
@@ -1261,9 +1270,9 @@
             "description": "Backup KBC project",
             "support": {
                 "issues": "https://github.com/keboola/php-kbc-project-backup/issues",
-                "source": "https://github.com/keboola/php-kbc-project-backup/tree/ondra-update-php"
+                "source": "https://github.com/keboola/php-kbc-project-backup/tree/1.10.0"
             },
-            "time": "2024-08-14T20:25:58+00:00"
+            "time": "2024-08-15T19:43:28+00:00"
         },
         {
             "name": "keboola/php-component",
@@ -5705,9 +5714,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "keboola/kbc-project-backup": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
