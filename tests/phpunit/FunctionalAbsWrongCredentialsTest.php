@@ -25,7 +25,6 @@ class FunctionalAbsWrongCredentialsTest extends TestCase
         parent::setUp();
 
         $this->temp = new Temp('project-backup');
-        $this->temp->initRunFolder();
 
         $this->sapiClient = new StorageApi([
             'url' => getenv('TEST_AZURE_STORAGE_API_URL'),
@@ -48,7 +47,7 @@ class FunctionalAbsWrongCredentialsTest extends TestCase
                     '#accountKey' => 'wrongsecret',
                     'region' => getenv('TEST_AZURE_REGION'),
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -67,10 +66,10 @@ class FunctionalAbsWrongCredentialsTest extends TestCase
         $errorOutput = $runProcess->getErrorOutput();
 
         $this->assertEmpty($output);
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             '/Server failed to authenticate the request. ' .
             'Make sure the value of Authorization header is formed correctly including the signature./',
-            $errorOutput
+            $errorOutput,
         );
     }
 

@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-use Keboola\Component\UserException;
-use Keboola\Component\Logger;
 use Keboola\App\ProjectBackup\Component;
+use Keboola\Component\Logger;
+use Keboola\Component\UserException;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 $logger = new Logger();
 try {
     $app = new Component($logger);
-    $app->run();
+    $app->execute();
     exit(0);
 } catch (UserException $e) {
     $logger->error($e->getMessage());
     exit(1);
-} catch (\Throwable $e) {
+} catch (Throwable $e) {
     $logger->critical(
         get_class($e) . ':' . $e->getMessage(),
         [
@@ -25,7 +25,7 @@ try {
             'errCode' => $e->getCode(),
             'errTrace' => $e->getTraceAsString(),
             'errPrevious' => $e->getPrevious() ? get_class($e->getPrevious()) : '',
-        ]
+        ],
     );
     exit(2);
 }

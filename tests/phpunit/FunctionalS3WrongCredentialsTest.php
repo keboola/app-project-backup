@@ -25,7 +25,6 @@ class FunctionalS3WrongCredentialsTest extends TestCase
         parent::setUp();
 
         $this->temp = new Temp('project-backup');
-        $this->temp->initRunFolder();
 
         $this->sapiClient = new StorageApi([
             'url' => getenv('TEST_STORAGE_API_URL'),
@@ -49,7 +48,7 @@ class FunctionalS3WrongCredentialsTest extends TestCase
                     'region' => getenv('TEST_AWS_REGION'),
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -71,7 +70,7 @@ class FunctionalS3WrongCredentialsTest extends TestCase
         $this->assertSame(
             'The request signature we calculated does not match the signature you provided. ' .
             "Check your key and signing method.\n",
-            $errorOutput
+            $errorOutput,
         );
     }
 
@@ -89,7 +88,7 @@ class FunctionalS3WrongCredentialsTest extends TestCase
                     'region' => getenv('TEST_AWS_REGION'),
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();
@@ -125,7 +124,7 @@ class FunctionalS3WrongCredentialsTest extends TestCase
                     'region' => getenv('TEST_AWS_REGION'),
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET') . 'invalid',
                 ],
-            ])
+            ]),
         );
 
         $runProcess = $this->createTestProcess();

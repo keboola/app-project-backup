@@ -31,7 +31,7 @@ class Application
                 $this->storageBackend = new AwsS3Storage(
                     $config->getS3Config(),
                     $config->isUserDefinedCredentials(),
-                    $logger
+                    $logger,
                 );
                 break;
             case Config::STORAGE_BACKEND_ABS:
@@ -40,7 +40,7 @@ class Application
             default:
                 throw new UserException(sprintf(
                     'Unknown storage backend type "%s".',
-                    $config->getStorageBackendType()
+                    $config->getStorageBackendType(),
                 ));
         }
     }
@@ -100,8 +100,8 @@ class Application
                 sprintf(
                     'Project with ID "%s" is not located in %s region',
                     $projectId,
-                    $imageParams['region']
-                )
+                    $imageParams['region'],
+                ),
             );
         }
 

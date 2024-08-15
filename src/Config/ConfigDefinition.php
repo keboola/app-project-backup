@@ -17,7 +17,7 @@ class ConfigDefinition extends BaseConfigDefinition
     protected function getRootDefinition(TreeBuilder $treeBuilder): ArrayNodeDefinition
     {
         /** @var ArrayNodeDefinition $rootNode */
-        $rootNode = $treeBuilder->root('root');
+        $rootNode = $treeBuilder->getRootNode();
         $rootNode->ignoreExtraKeys(false);
 
         // @formatter:off
@@ -48,7 +48,7 @@ class ConfigDefinition extends BaseConfigDefinition
                                 if (empty($v[$item])) {
                                     throw new InvalidConfigurationException(sprintf(
                                         'Missing required parameter "%s".',
-                                        $item
+                                        $item,
                                     ));
                                 }
                             }
@@ -65,7 +65,7 @@ class ConfigDefinition extends BaseConfigDefinition
                                 if (empty($v[$item])) {
                                     throw new InvalidConfigurationException(sprintf(
                                         'Missing required parameter "%s".',
-                                        $item
+                                        $item,
                                     ));
                                 }
                             }
@@ -76,7 +76,7 @@ class ConfigDefinition extends BaseConfigDefinition
                 } else {
                     if (!array_key_exists('backupId', $v)) {
                         throw new InvalidConfigurationException(
-                            'The child node "backupId" at path "root.parameters" must be configured.'
+                            'The child node "backupId" at path "root.parameters" must be configured.',
                         );
                     }
                 }
@@ -105,9 +105,9 @@ class ConfigDefinition extends BaseConfigDefinition
      */
     protected function getImageParametersDefinition(): ArrayNodeDefinition
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('image_parameters');
         /** @var ArrayNodeDefinition $parametersNode */
-        $parametersNode = $builder->root('image_parameters');
+        $parametersNode = $builder->getRootNode();
         $parametersNode->isRequired();
         $parametersNode->ignoreExtraKeys(false);
 
