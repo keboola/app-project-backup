@@ -71,6 +71,7 @@ class Application
 
         $backup->backupConfigs($this->config->includeVersions());
         $backup->backupTriggers();
+        $backup->backupNotifications();
         $backup->backupPermanentFiles();
     }
 
