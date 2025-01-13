@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a5867d1fc631db0e6a1e8e394f954908",
+    "content-hash": "47d78d9aac0d0465e861af0b379c523d",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1216,16 +1216,16 @@
         },
         {
             "name": "keboola/kbc-project-backup",
-            "version": "1.12.0",
+            "version": "1.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/php-kbc-project-backup.git",
-                "reference": "45939088861ec0e4bfeb00fcc3af0ebbc56fdfea"
+                "reference": "38a5214a202e3c3a7214c198a64797326cb9a8ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/php-kbc-project-backup/zipball/45939088861ec0e4bfeb00fcc3af0ebbc56fdfea",
-                "reference": "45939088861ec0e4bfeb00fcc3af0ebbc56fdfea",
+                "url": "https://api.github.com/repos/keboola/php-kbc-project-backup/zipball/38a5214a202e3c3a7214c198a64797326cb9a8ee",
+                "reference": "38a5214a202e3c3a7214c198a64797326cb9a8ee",
                 "shasum": ""
             },
             "require": {
@@ -1271,9 +1271,9 @@
             "description": "Backup KBC project",
             "support": {
                 "issues": "https://github.com/keboola/php-kbc-project-backup/issues",
-                "source": "https://github.com/keboola/php-kbc-project-backup/tree/1.12.0"
+                "source": "https://github.com/keboola/php-kbc-project-backup/tree/1.13.0"
             },
-            "time": "2024-09-04T19:07:48+00:00"
+            "time": "2025-01-11T21:27:54+00:00"
         },
         {
             "name": "keboola/notification-api-php-client",
