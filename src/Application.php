@@ -8,8 +8,10 @@ use Exception;
 use Keboola\App\ProjectBackup\Config\Config;
 use Keboola\App\ProjectBackup\Storages\AwsS3Storage;
 use Keboola\App\ProjectBackup\Storages\AzureBlobStorage;
+use Keboola\App\ProjectBackup\Storages\GoogleCloudStorage;
 use Keboola\App\ProjectBackup\Storages\IStorage;
 use Keboola\Component\UserException;
+use Keboola\ProjectBackup\GcsBackup;
 use Keboola\StorageApi\Client as StorageApi;
 use Psr\Log\LoggerInterface;
 
@@ -36,6 +38,9 @@ class Application
                 break;
             case Config::STORAGE_BACKEND_ABS:
                 $this->storageBackend = new AzureBlobStorage($config->getAbsConfig(), $logger);
+                break;
+            case Config::STORAGE_BACKEND_GCS:
+                $this->storageBackend = new GoogleCloudStorage($config->getGcsConfig(), $logger);
                 break;
             default:
                 throw new UserException(sprintf(
@@ -73,6 +78,10 @@ class Application
         $backup->backupTriggers();
         $backup->backupNotifications();
         $backup->backupPermanentFiles();
+
+        if ($backup instanceof GcsBackup && !$this->config->isUserDefinedCredentials()) {
+            $backup->backupSignedUrls();
+        }
     }
 
     public function generateReadCredentials(): array
