@@ -2,3 +2,4 @@
 /vendor
 /.idea
 /data
+.phpunit.result.cache

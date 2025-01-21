@@ -9,17 +9,28 @@ env:
   KBC_DEVELOPERPORTAL_PASSWORD: ${{ secrets.KBC_DEVELOPERPORTAL_PASSWORD }}
   DOCKERHUB_USER: keboolabot
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  # AWS Credentials
   TEST_STORAGE_API_URL: https://connection.eu-central-1.keboola.com/
   TEST_STORAGE_API_TOKEN: ${{ secrets.TEST_STORAGE_API_TOKEN }}
   TEST_AWS_ACCESS_KEY_ID: AKIAQLZBTO5VMQJGVGNK
   TEST_AWS_SECRET_ACCESS_KEY: ${{ secrets.TEST_AWS_SECRET_ACCESS_KEY }}
   TEST_AWS_REGION: eu-central-1
   TEST_AWS_S3_BUCKET: ci-app-project-backup-s3filesbucket-7qyiq6iqfrse
+
+  # Azure Credentials
   TEST_AZURE_STORAGE_API_URL: https://connection.north-europe.azure.keboola.com/
   TEST_AZURE_STORAGE_API_TOKEN: ${{ secrets.TEST_AZURE_STORAGE_API_TOKEN }}
   TEST_AZURE_ACCOUNT_NAME: ciappprojectbackup
   TEST_AZURE_ACCOUNT_KEY: ${{ secrets.TEST_AZURE_ACCOUNT_KEY }}
   TEST_AZURE_REGION: eu-west-1
+
+  # GCP Credentials
+  TEST_GCP_STORAGE_API_URL: "https://connection.europe-west3.gcp.keboola.com/"
+  TEST_GCP_STORAGE_API_TOKEN: ${{ secrets.TEST_GCP_STORAGE_API_TOKEN }}
+  TEST_GCP_SERVICE_ACCOUNT: ${{ secrets.TEST_GCP_SERVICE_ACCOUNT }}
+  TEST_GCP_BUCKET: "ci-app-project-backup"
+  TEST_GCP_REGION: "europe-west3"
 
 jobs:
   build:
@@ -92,6 +103,11 @@ jobs:
           -e TEST_AZURE_ACCOUNT_NAME
           -e TEST_AZURE_ACCOUNT_KEY
           -e TEST_AZURE_REGION
+          -e TEST_GCP_STORAGE_API_URL
+          -e TEST_GCP_STORAGE_API_TOKEN
+          -e TEST_GCP_BUCKET
+          -e TEST_GCP_REGION
+          -e TEST_GCP_SERVICE_ACCOUNT
           $APP_IMAGE composer ci
 
   deploy:
