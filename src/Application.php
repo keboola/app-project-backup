@@ -32,7 +32,6 @@ class Application
             case Config::STORAGE_BACKEND_S3:
                 $this->storageBackend = new AwsS3Storage(
                     $config->getS3Config(),
-                    $config->isUserDefinedCredentials(),
                     $logger,
                 );
                 break;
@@ -88,7 +87,7 @@ class Application
     {
         $sapi = $this->initSapi();
         /** @var string */
-        $backupId = $sapi->generateId();
+        $backupId = $this->config->getBackupId() !== '' ? $this->config->getBackupId() : $sapi->generateId();
         if ($this->config->isUserDefinedCredentials()) {
             $path = $this->config->getPath();
         } else {
