@@ -7,6 +7,8 @@ namespace Keboola\App\ProjectBackup\Tests;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Aws\S3\S3UriParser;
+use Google\Auth\FetchAuthTokenInterface;
+use Google\Cloud\Core\Exception\ServiceException;
 use Google\Cloud\Storage\StorageClient;
 use Google\Cloud\Storage\StorageObject;
 use Keboola\App\ProjectBackup\Config\Config;
@@ -58,6 +60,122 @@ class FunctionalGCSTest extends TestCase
         $component->addConfiguration($config);
 
         $this->testRunId = $this->sapiClient->generateRunId();
+    }
+
+    public function testCreateCredentials(): void
+    {
+        $backupId = $this->sapiClient->generateId();
+        // run backup
+        $fileSystem = new Filesystem();
+        $fileSystem->dumpFile(
+            $this->temp->getTmpFolder() . '/config.json',
+            (string) json_encode([
+                'action' => 'run',
+                'parameters' => [
+                    'backupId' => $backupId,
+                ],
+                'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_GCS,
+                    '#jsonKey' => getenv('TEST_GCP_SERVICE_ACCOUNT'),
+                    'region' => getenv('TEST_GCP_REGION'),
+                    '#bucket' => getenv('TEST_GCP_BUCKET'),
+                ],
+            ]),
+        );
+
+        $runProcess = $this->createTestProcess();
+        $runProcess->mustRun();
+
+        $fileSystem = new Filesystem();
+        $fileSystem->dumpFile(
+            $this->temp->getTmpFolder() . '/config.json',
+            (string) json_encode([
+                'action' => 'generate-read-credentials',
+                'parameters' => [
+                    'backupId' => $backupId,
+                ],
+                'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_GCS,
+                    '#jsonKey' => getenv('TEST_GCP_SERVICE_ACCOUNT'),
+                    'region' => getenv('TEST_GCP_REGION'),
+                    '#bucket' => getenv('TEST_GCP_BUCKET'),
+                ],
+            ]),
+        );
+
+        $runProcess = $this->createTestProcess();
+        $runProcess->mustRun();
+
+        $this->assertEmpty($runProcess->getErrorOutput());
+
+        $output = $runProcess->getOutput();
+        /** @var array $outputData */
+        $outputData = json_decode($output, true);
+
+        $this->assertArrayHasKey('projectId', $outputData);
+        $this->assertArrayHasKey('bucket', $outputData);
+        $this->assertArrayHasKey('backupUri', $outputData);
+        $this->assertArrayHasKey('credentials', $outputData);
+        $this->assertArrayHasKey('accessToken', $outputData['credentials']);
+        $this->assertArrayHasKey('expiresIn', $outputData['credentials']);
+        $this->assertArrayHasKey('tokenType', $outputData['credentials']);
+
+        $credentials = $outputData['credentials'];
+        $fetchAuthToken = $this->getAuthTokenClass([
+            'access_token' => $credentials['accessToken'],
+            'expires_in' => $credentials['expiresIn'],
+            'token_type' => $credentials['tokenType'],
+        ]);
+        $storageClient = new StorageClient([
+            'projectId' => $outputData['projectId'],
+            'credentialsFetcher' => $fetchAuthToken,
+        ]);
+
+        // access signed urls file
+        $storageClient
+            ->bucket($outputData['bucket'])
+            ->object($outputData['backupUri'] . 'signedUrls.json')
+            ->exists();
+
+        // access other file
+        try {
+            $storageClient
+                ->bucket($outputData['bucket'])
+                ->object($outputData['backupUri'] . 'configurations.json')
+                ->exists();
+            $this->fail('Getting configurations file should produce error');
+        } catch (ServiceException $e) {
+            $this->assertEquals(403, $e->getCode());
+            $this->assertStringContainsString('does not have storage.objects.get access', $e->getMessage());
+        }
+
+        try {
+            $storageClient->bucket($outputData['bucket'])->upload('Hello world', [
+                'name' => $outputData['backupUri'] . 'sample.txt',
+            ]);
+            $this->fail('Uploading file should produce error');
+        } catch (ServiceException $e) {
+            $this->assertEquals(403, $e->getCode());
+            $this->assertStringContainsString('does not have storage.objects.create access', $e->getMessage());
+        }
+
+        // access other backup
+        try {
+            $storageClient
+                ->bucket($outputData['bucket'])
+                ->object(
+                    str_replace(
+                        $backupId,
+                        '123',
+                        $outputData['backupUri'],
+                    ) . 'signedUrls.json',
+                )
+                ->exists();
+            $this->fail('Getting other backup should produce error');
+        } catch (ServiceException $e) {
+            $this->assertEquals(403, $e->getCode());
+            $this->assertStringContainsString('does not have storage.objects.get access', $e->getMessage());
+        }
     }
 
     public function testSuccessfulRun(): void
@@ -258,5 +376,33 @@ class FunctionalGCSTest extends TestCase
         foreach ($objects as $object) {
             $object->delete();
         }
+    }
+
+    private function getAuthTokenClass(array $credentials): FetchAuthTokenInterface
+    {
+        return new class ($credentials) implements FetchAuthTokenInterface {
+            private array $creds;
+
+            public function __construct(
+                array $creds,
+            ) {
+                $this->creds = $creds;
+            }
+
+            public function fetchAuthToken(?callable $httpHandler = null): array
+            {
+                return $this->creds;
+            }
+
+            public function getCacheKey(): string
+            {
+                return '';
+            }
+
+            public function getLastReceivedToken(): array
+            {
+                return $this->creds;
+            }
+        };
     }
 }
