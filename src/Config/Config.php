@@ -12,6 +12,8 @@ class Config extends BaseConfig
 
     public const STORAGE_BACKEND_ABS = 'abs';
 
+    public const STORAGE_BACKEND_GCS = 'gcs';
+
     public function getBackupId(): string
     {
         return $this->getStringValue(['parameters', 'backupId'], '');
@@ -70,5 +72,10 @@ class Config extends BaseConfig
     public function getAbsConfig(): AbsConfig
     {
         return new AbsConfig($this->getCredentialsParameters());
+    }
+
+    public function getGcsConfig(): GcsConfig
+    {
+        return new GcsConfig($this->getCredentialsParameters(), $this->isUserDefinedCredentials());
     }
 }

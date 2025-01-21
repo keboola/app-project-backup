@@ -43,6 +43,16 @@ class ConfigDefinition extends BaseConfigDefinition
             ->validate()->always(function ($v) {
                 if (!empty($v['storageBackendType'])) {
                     switch ($v['storageBackendType']) {
+                        case Config::STORAGE_BACKEND_GCS:
+                            foreach (['#jsonKey', '#bucket', 'region'] as $item) {
+                                if (empty($v[$item])) {
+                                    throw new InvalidConfigurationException(sprintf(
+                                        'Missing required parameter "%s".',
+                                        $item,
+                                    ));
+                                }
+                            }
+                            break;
                         case Config::STORAGE_BACKEND_ABS:
                             foreach (['backupPath', 'accountName', '#accountKey'] as $item) {
                                 if (empty($v[$item])) {
@@ -94,6 +104,8 @@ class ConfigDefinition extends BaseConfigDefinition
                 ->scalarNode('access_key_id')->end()
                 ->scalarNode('#secret_access_key')->end()
                 ->scalarNode('#bucket')->end()
+                ->scalarNode('#jsonKey')->end()
+                ->scalarNode('region')->end()
             ->end()
         ;
         // @formatter:on
