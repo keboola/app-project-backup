@@ -30,6 +30,33 @@ class ConfigTest extends TestCase
         Assert::assertEquals($expectedStorageBackendType, $config->getStorageBackendType());
     }
 
+    public function testBackupId(): void
+    {
+        $config = new Config([
+            'action' => 'run',
+            'parameters' => [
+                'backupId' => '123456',
+            ],
+            'image_parameters' => [
+                'storageBackendType' => Config::STORAGE_BACKEND_S3,
+            ],
+        ], new ConfigDefinition());
+
+        Assert::assertEquals('123456', $config->getBackupId());
+
+        $config = new Config([
+            'action' => 'run',
+            'parameters' => [
+                'backupId' => null,
+            ],
+            'image_parameters' => [
+                'storageBackendType' => Config::STORAGE_BACKEND_S3,
+            ],
+        ], new ConfigDefinition());
+
+        Assert::assertEquals('', $config->getBackupId());
+    }
+
     /** @dataProvider invalidConfigDataProvider */
     public function testInvalidConfig(array $configArray, string $expectedExceptionMessage): void
     {

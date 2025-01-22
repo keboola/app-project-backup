@@ -14,9 +14,11 @@ class Config extends BaseConfig
 
     public const STORAGE_BACKEND_GCS = 'gcs';
 
-    public function getBackupId(): string
+    public function getBackupId(): ?string
     {
-        return $this->getStringValue(['parameters', 'backupId'], '');
+        /** @var ?string $val */
+        $val = $this->getValue(['parameters', 'backupId'], '');
+        return $val;
     }
 
     public function getStorageBackendType(): string
