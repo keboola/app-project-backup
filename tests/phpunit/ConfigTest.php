@@ -356,5 +356,68 @@ class ConfigTest extends TestCase
             ],
             'The child node "backupId" at path "root.parameters" must be configured.',
         ];
+
+        yield 'gcs-missing-backupId' => [
+            [
+                'action' => 'run',
+                'parameters' => [
+                ],
+                'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_GCS,
+                    '#jsonKey' => 'testJsonKey',
+                    '#bucket' => 'testBucket',
+                    'region' => 'testRegion',
+                ],
+            ],
+            'The child node "backupId" at path "root.parameters" must be configured.',
+        ];
+
+        yield 'gcs-missing-jsonKey' => [
+            [
+                'action' => 'run',
+                'parameters' => [
+                    'backupId' => 'testBackupId',
+                    'storageBackendType' => Config::STORAGE_BACKEND_GCS,
+                    '#bucket' => 'testBucket',
+                    'region' => 'testRegion',
+                ],
+                'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_GCS,
+                ],
+            ],
+            'Missing required parameter "#jsonKey".',
+        ];
+
+        yield 'gcs-missing-bucket' => [
+            [
+                'action' => 'run',
+                'parameters' => [
+                    'backupId' => 'testBackupId',
+                    'storageBackendType' => Config::STORAGE_BACKEND_GCS,
+                    '#jsonKey' => 'testJsonKey',
+                    'region' => 'testRegion',
+                ],
+                'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_GCS,
+                ],
+            ],
+            'Missing required parameter "#bucket".',
+        ];
+
+        yield 'gcs-missing-region' => [
+            [
+                'action' => 'run',
+                'parameters' => [
+                    'backupId' => 'testBackupId',
+                    'storageBackendType' => Config::STORAGE_BACKEND_GCS,
+                    '#jsonKey' => 'testJsonKey',
+                    '#bucket' => 'testBucket',
+                ],
+                'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_GCS,
+                ],
+            ],
+            'Missing required parameter "region".',
+        ];
     }
 }

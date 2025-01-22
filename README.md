@@ -89,21 +89,31 @@ cd app-project-backup
     - `TEST_AZURE_STORAGE_API_URL` - KBC Storage with Blob Storage backend API endpoint
     - `TEST_AZURE_STORAGE_API_TOKEN` - KBC Storage with Blob Storage backend API token
     - `TEST_AZURE_ACCOUNT_` - Storage Account in your Azure Subscription
+    - `TEST_GCP_STORAGE_API_URL` - KBC Storage with Google backend API endpoint
+    - `TEST_GCP_STORAGE_API_TOKEN` - KBC Storage with Google backend API token
+    - `TEST_GCP_SERVICE_ACCOUNT` - Service account with permissions to write to the bucket
+    - `TEST_GCP_BUCKET` - Bucket in your Google Storage
+    - `TEST_GCP_REGION` - KBC Storage with Google backend region
     
 ```
+TEST_STORAGE_API_URL=
+TEST_STORAGE_API_TOKEN=
 TEST_AWS_ACCESS_KEY_ID=
 TEST_AWS_SECRET_ACCESS_KEY=
 TEST_AWS_REGION=
 TEST_AWS_S3_BUCKET=
 
-TEST_STORAGE_API_URL=
-TEST_STORAGE_API_TOKEN=
-
-TEST_AZURE_REGION=
 TEST_AZURE_STORAGE_API_URL=
 TEST_AZURE_STORAGE_API_TOKEN=
+TEST_AZURE_REGION=
 TEST_AZURE_ACCOUNT_NAME=
 TEST_AZURE_ACCOUNT_KEY=
+
+TEST_GCP_STORAGE_API_URL=
+TEST_GCP_STORAGE_API_TOKEN=
+TEST_GCP_SERVICE_ACCOUNT=
+TEST_GCP_BUCKET=
+TEST_GCP_REGION=
 ```
 
 - Build Docker image
@@ -156,6 +166,23 @@ docker-compose run --rm dev composer ci
 }
 ```
 
+
+- GCP example (Generate Read Credentials action)
+```json
+{
+  "action": "generate-read-credentials",
+  "parameters": {
+    "backupId": null
+  },
+  "image_parameters": {
+    "storageBackendType": "gcs",
+    "#jsonKey": "",
+    "#bucket": "",
+    "region": "europe-west4"
+  }
+}
+```
+
 - AWS example (Backup action)
 ```json
 {
@@ -189,7 +216,23 @@ docker-compose run --rm dev composer ci
   }
 }
 ```
- 
+
+
+- GCP example (Backup action)
+```json
+{
+  "action": "run",
+  "parameters": {
+    "backupId": "backupId from `generate-read-credentials` action - if not set will be created"
+  },
+  "image_parameters": {
+    "storageBackendType": "gcs",
+    "#jsonKey": "",
+    "#bucket": "",
+    "region": "europe-west4"
+  }
+}
+```
 # Integration
 
 For information about deployment and integration with KBC, please refer to the [deployment section of developers documentation](https://developers.keboola.com/extend/component/deployment/) 
