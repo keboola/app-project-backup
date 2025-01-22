@@ -87,10 +87,7 @@ class AzureBlobStorage implements IStorage
             throw $e;
         }
         if (!in_array($path, $listContainers)) {
-            throw new UserException(sprintf(
-                'The specified container "%s" does not exist.',
-                $path,
-            ));
+            $client->createContainer($path);
         }
 
         return new AbsBackup($sapi, $client, $path, $this->logger);

@@ -274,41 +274,6 @@ class FunctionalS3Test extends TestCase
         self::assertGreaterThan(0, count($events));
     }
 
-    public function testBadBackupIdRun(): void
-    {
-        $fileSystem = new Filesystem();
-        $fileSystem->dumpFile(
-            $this->temp->getTmpFolder() . '/config.json',
-            (string) json_encode([
-                'action' => 'run',
-                'parameters' => [
-                    'backupId' => $this->sapiClient->generateId(),
-                ],
-                'image_parameters' => [
-                    'storageBackendType' => Config::STORAGE_BACKEND_S3,
-                    'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
-                    '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
-                    'region' => getenv('TEST_AWS_REGION'),
-                    '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
-                ],
-            ]),
-        );
-
-        $runProcess = $this->createTestProcess();
-        $runProcess->run();
-
-        $this->assertEquals(1, $runProcess->getExitCode());
-
-        $output = $runProcess->getOutput();
-        $errorOutput = $runProcess->getErrorOutput();
-
-        $this->assertEmpty($output);
-        $this->assertStringMatchesFormat(
-            'Backup path "%s" not found in the bucket "%s".',
-            trim($errorOutput),
-        );
-    }
-
     public function testCreateUnexistsBackupFolderS3(): void
     {
         $fileSystem = new Filesystem();

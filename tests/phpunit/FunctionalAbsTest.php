@@ -237,38 +237,6 @@ class FunctionalAbsTest extends TestCase
         self::assertGreaterThan(0, count($events));
     }
 
-    public function testBadBackupIdRun(): void
-    {
-        $fileSystem = new Filesystem();
-        $fileSystem->dumpFile(
-            $this->temp->getTmpFolder() . '/config.json',
-            (string) json_encode([
-                'action' => 'run',
-                'parameters' => [
-                    'backupId' => $this->sapiClient->generateId(),
-                ],
-                'image_parameters' => [
-                    'storageBackendType' => Config::STORAGE_BACKEND_ABS,
-                    'accountName' => getenv('TEST_AZURE_ACCOUNT_NAME'),
-                    '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
-                    'region' => getenv('TEST_AZURE_REGION'),
-                ],
-            ]),
-        );
-
-        $runProcess = $this->createTestProcess();
-        $runProcess->run();
-
-        $this->assertEquals(1, $runProcess->getExitCode());
-
-        $output = $runProcess->getOutput();
-        $errorOutput = $runProcess->getErrorOutput();
-
-        $this->assertEmpty($output);
-        $this->assertStringContainsString('The specified container', $errorOutput);
-        $this->assertStringContainsString('does not exist.', $errorOutput);
-    }
-
     public function testRegionErrorRun(): void
     {
         $fileSystem = new Filesystem();
