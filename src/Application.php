@@ -104,12 +104,12 @@ class Application
         $region = $token['owner']['region'];
         $projectId = $token['owner']['id'];
 
-        if ($region !== $imageParams['region']) {
+        if (!in_array($region, $imageParams['regions'], true)) {
             throw new Exception(
                 sprintf(
-                    'Project with ID "%s" is not located in %s region',
+                    'Project with ID "%s" is not located in %s regions',
                     $projectId,
-                    $imageParams['region'],
+                    implode(',', $imageParams['regions']),
                 ),
             );
         }

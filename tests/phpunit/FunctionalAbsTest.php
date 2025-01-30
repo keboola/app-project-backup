@@ -61,7 +61,7 @@ class FunctionalAbsTest extends TestCase
                     'storageBackendType' => Config::STORAGE_BACKEND_ABS,
                     'accountName' => getenv('TEST_AZURE_ACCOUNT_NAME'),
                     '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
-                    'region' => getenv('TEST_AZURE_REGION'),
+                    'regions' => [getenv('TEST_AZURE_REGION')],
                 ],
             ]),
         );
@@ -114,7 +114,7 @@ class FunctionalAbsTest extends TestCase
                     'storageBackendType' => Config::STORAGE_BACKEND_ABS,
                     'accountName' => getenv('TEST_AZURE_ACCOUNT_NAME'),
                     '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
-                    'region' => getenv('TEST_AZURE_REGION'),
+                    'regions' => [getenv('TEST_AZURE_REGION')],
                 ],
             ]),
         );
@@ -142,7 +142,7 @@ class FunctionalAbsTest extends TestCase
                     'storageBackendType' => Config::STORAGE_BACKEND_ABS,
                     'accountName' => getenv('TEST_AZURE_ACCOUNT_NAME'),
                     '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
-                    'region' => getenv('TEST_AZURE_REGION'),
+                    'regions' => [getenv('TEST_AZURE_REGION')],
                 ],
             ]),
         );
@@ -188,7 +188,7 @@ class FunctionalAbsTest extends TestCase
                     'storageBackendType' => Config::STORAGE_BACKEND_ABS,
                     'accountName' => getenv('TEST_AZURE_ACCOUNT_NAME'),
                     '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
-                    'region' => getenv('TEST_AZURE_REGION'),
+                    'regions' => [getenv('TEST_AZURE_REGION')],
                 ],
             ]),
         );
@@ -217,7 +217,7 @@ class FunctionalAbsTest extends TestCase
                     'storageBackendType' => Config::STORAGE_BACKEND_ABS,
                     'accountName' => getenv('TEST_AZURE_ACCOUNT_NAME'),
                     '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
-                    'region' => getenv('TEST_AZURE_REGION'),
+                    'regions' => [getenv('TEST_AZURE_REGION')],
                 ],
             ]),
         );
@@ -251,7 +251,7 @@ class FunctionalAbsTest extends TestCase
                     'storageBackendType' => Config::STORAGE_BACKEND_ABS,
                     'accountName' => getenv('TEST_AZURE_ACCOUNT_NAME'),
                     '#accountKey' => getenv('TEST_AZURE_ACCOUNT_KEY'),
-                    'region' => 'unknown-custom-region',
+                    'regions' => ['unknown-custom-region'],
                 ],
             ]),
         );
