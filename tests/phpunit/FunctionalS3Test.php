@@ -62,7 +62,7 @@ class FunctionalS3Test extends TestCase
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
                     '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
-                    'region' => getenv('TEST_AWS_REGION'),
+                    'regions' => [getenv('TEST_AWS_REGION')],
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                 ],
             ]),
@@ -92,7 +92,7 @@ class FunctionalS3Test extends TestCase
 
         $readS3Client = new S3Client([
             'version' => 'latest',
-            'region' => $outputData['region'],
+            'regions' => [$outputData['region']],
             'credentials' => [
                 'key' => $outputData['credentials']['accessKeyId'],
                 'secret' => $outputData['credentials']['secretAccessKey'],
@@ -147,7 +147,7 @@ class FunctionalS3Test extends TestCase
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
                     '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
-                    'region' => getenv('TEST_AWS_REGION'),
+                    'regions' => [getenv('TEST_AWS_REGION')],
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                 ],
             ]),
@@ -176,7 +176,7 @@ class FunctionalS3Test extends TestCase
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
                     '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
-                    'region' => getenv('TEST_AWS_REGION'),
+                    'regions' => [getenv('TEST_AWS_REGION')],
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                 ],
             ]),
@@ -223,7 +223,7 @@ class FunctionalS3Test extends TestCase
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
                     '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
-                    'region' => getenv('TEST_AWS_REGION'),
+                    'regions' => [getenv('TEST_AWS_REGION')],
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                 ],
             ]),
@@ -253,7 +253,7 @@ class FunctionalS3Test extends TestCase
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
                     '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
-                    'region' => getenv('TEST_AWS_REGION'),
+                    'regions' => [getenv('TEST_AWS_REGION')],
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                 ],
             ]),
@@ -285,7 +285,7 @@ class FunctionalS3Test extends TestCase
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
                     '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
-                    'region' => getenv('TEST_AWS_REGION'),
+                    'regions' => [getenv('TEST_AWS_REGION')],
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                     'backupPath' => 'unexists/backup/folder',
                 ],
@@ -293,7 +293,7 @@ class FunctionalS3Test extends TestCase
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     'access_key_id' => '',
                     '#secret_access_key' => '',
-                    'region' => '',
+                    'regions' => [''],
                     '#bucket' => '',
                 ],
             ]),
@@ -306,7 +306,7 @@ class FunctionalS3Test extends TestCase
 
         $client = new S3Client([
             'version' => 'latest',
-            'region' => getenv('TEST_AWS_REGION'),
+            'regions' => [getenv('TEST_AWS_REGION')],
             'credentials' => [
                 'key' => getenv('TEST_AWS_ACCESS_KEY_ID'),
                 'secret' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
@@ -335,7 +335,7 @@ class FunctionalS3Test extends TestCase
                     'storageBackendType' => Config::STORAGE_BACKEND_S3,
                     'access_key_id' => getenv('TEST_AWS_ACCESS_KEY_ID'),
                     '#secret_access_key' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),
-                    'region' => 'unknown-custom-region',
+                    'regions' => ['unknown-custom-region'],
                     '#bucket' => getenv('TEST_AWS_S3_BUCKET'),
                 ],
             ]),
@@ -393,7 +393,7 @@ class FunctionalS3Test extends TestCase
     {
         $client = new S3Client([
             'version' => 'latest',
-            'region' => getenv('TEST_AWS_REGION'),
+            'regions' => [getenv('TEST_AWS_REGION')],
             'credentials' => [
                 'key' => getenv('TEST_AWS_ACCESS_KEY_ID'),
                 'secret' => getenv('TEST_AWS_SECRET_ACCESS_KEY'),

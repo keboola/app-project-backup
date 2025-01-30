@@ -77,7 +77,7 @@ class FunctionalGCSTest extends TestCase
                 'image_parameters' => [
                     'storageBackendType' => Config::STORAGE_BACKEND_GCS,
                     '#jsonKey' => getenv('TEST_GCP_SERVICE_ACCOUNT'),
-                    'region' => getenv('TEST_GCP_REGION'),
+                    'regions' => [getenv('TEST_GCP_REGION')],
                     '#bucket' => getenv('TEST_GCP_BUCKET'),
                 ],
             ]),
@@ -97,7 +97,7 @@ class FunctionalGCSTest extends TestCase
                 'image_parameters' => [
                     'storageBackendType' => Config::STORAGE_BACKEND_GCS,
                     '#jsonKey' => getenv('TEST_GCP_SERVICE_ACCOUNT'),
-                    'region' => getenv('TEST_GCP_REGION'),
+                    'regions' => [getenv('TEST_GCP_REGION')],
                     '#bucket' => getenv('TEST_GCP_BUCKET'),
                 ],
             ]),
@@ -192,7 +192,7 @@ class FunctionalGCSTest extends TestCase
                 'image_parameters' => [
                     'storageBackendType' => Config::STORAGE_BACKEND_GCS,
                     '#jsonKey' => getenv('TEST_GCP_SERVICE_ACCOUNT'),
-                    'region' => getenv('TEST_GCP_REGION'),
+                    'regions' => [getenv('TEST_GCP_REGION')],
                     '#bucket' => getenv('TEST_GCP_BUCKET'),
                 ],
             ]),
@@ -241,7 +241,7 @@ class FunctionalGCSTest extends TestCase
                 'image_parameters' => [
                     'storageBackendType' => Config::STORAGE_BACKEND_GCS,
                     '#jsonKey' => getenv('TEST_GCP_SERVICE_ACCOUNT'),
-                    'region' => getenv('TEST_GCP_REGION'),
+                    'regions' => [getenv('TEST_GCP_REGION')],
                     '#bucket' => getenv('TEST_GCP_BUCKET'),
                 ],
             ]),
@@ -272,7 +272,7 @@ class FunctionalGCSTest extends TestCase
                 'parameters' => [
                     'storageBackendType' => Config::STORAGE_BACKEND_GCS,
                     '#jsonKey' => getenv('TEST_GCP_SERVICE_ACCOUNT'),
-                    'region' => getenv('TEST_GCP_REGION'),
+                    'regions' => [getenv('TEST_GCP_REGION')],
                     '#bucket' => getenv('TEST_GCP_BUCKET'),
                     'backupPath' => 'unexists/backup/folder',
                 ],
@@ -280,7 +280,7 @@ class FunctionalGCSTest extends TestCase
                     'storageBackendType' => Config::STORAGE_BACKEND_GCS,
                     'access_key_id' => '',
                     '#secret_access_key' => '',
-                    'region' => '',
+                    'regions' => [''],
                     '#bucket' => '',
                 ],
             ]),
@@ -314,7 +314,7 @@ class FunctionalGCSTest extends TestCase
                 'image_parameters' => [
                     'storageBackendType' => Config::STORAGE_BACKEND_GCS,
                     '#jsonKey' => getenv('TEST_GCP_SERVICE_ACCOUNT'),
-                    'region' => 'unknown-custom-region',
+                    'regions' => ['unknown-custom-region'],
                     '#bucket' => getenv('TEST_GCP_BUCKET'),
                 ],
             ]),

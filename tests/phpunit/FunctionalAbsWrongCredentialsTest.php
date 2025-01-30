@@ -45,7 +45,7 @@ class FunctionalAbsWrongCredentialsTest extends TestCase
                     'storageBackendType' => Config::STORAGE_BACKEND_ABS,
                     'accountName' => getenv('TEST_AZURE_ACCOUNT_NAME'),
                     '#accountKey' => 'wrongsecret',
-                    'region' => getenv('TEST_AZURE_REGION'),
+                    'regions' => [getenv('TEST_AZURE_REGION')],
                 ],
             ]),
         );
