@@ -57,6 +57,34 @@ class ConfigTest extends TestCase
         Assert::assertEquals('', $config->getBackupId());
     }
 
+    public function testSkipRegionValidation(): void
+    {
+        $config = new Config([
+            'action' => 'run',
+            'parameters' => [
+                'backupId' => '123456',
+                'skipRegionValidation' => true,
+            ],
+            'image_parameters' => [
+                'storageBackendType' => Config::STORAGE_BACKEND_S3,
+            ],
+        ], new ConfigDefinition());
+
+        Assert::assertTrue($config->skipRegionValidation());
+
+        $config = new Config([
+            'action' => 'run',
+            'parameters' => [
+                'backupId' => '123456',
+            ],
+            'image_parameters' => [
+                'storageBackendType' => Config::STORAGE_BACKEND_S3,
+            ],
+        ], new ConfigDefinition());
+
+        Assert::assertFalse($config->skipRegionValidation());
+    }
+
     /** @dataProvider invalidConfigDataProvider */
     public function testInvalidConfig(array $configArray, string $expectedExceptionMessage): void
     {
@@ -251,6 +279,25 @@ class ConfigTest extends TestCase
             'testPath',
             true,
             Config::STORAGE_BACKEND_ABS,
+        ];
+
+        yield 'config-with-skip-region-validation' => [
+            [
+                'action' => 'run',
+                'parameters' => [
+                    'backupId' => 123456,
+                    'skipRegionValidation' => true,
+                ],
+                'image_parameters' => [
+                    'storageBackendType' => Config::STORAGE_BACKEND_S3,
+                ],
+            ],
+            [
+                'storageBackendType' => Config::STORAGE_BACKEND_S3,
+            ],
+            '.',
+            false,
+            Config::STORAGE_BACKEND_S3,
         ];
     }
 

@@ -104,7 +104,7 @@ class Application
         $region = $token['owner']['region'];
         $projectId = $token['owner']['id'];
 
-        if ($region !== $imageParams['region']) {
+        if (!$this->config->skipRegionValidation() && $region !== $imageParams['region']) {
             throw new Exception(
                 sprintf(
                     'Project with ID "%s" is not located in %s region',

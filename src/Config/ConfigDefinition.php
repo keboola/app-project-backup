@@ -97,6 +97,7 @@ class ConfigDefinition extends BaseConfigDefinition
                 ->scalarNode('backupPath')->end()
                 ->booleanNode('exportStructureOnly')->end()
                 ->booleanNode('includeVersions')->end()
+                ->booleanNode('skipRegionValidation')->defaultFalse()->end()
                 ->scalarNode('storageBackendType')->end()
                 ->scalarNode('accountName')->end()
                 ->scalarNode('#accountKey')->end()
