@@ -106,7 +106,6 @@ class ConfigDefinition extends BaseConfigDefinition
                 ->scalarNode('#secret_access_key')->end()
                 ->scalarNode('#bucket')->end()
                 ->scalarNode('#jsonKey')->end()
-                ->scalarNode('region')->end()
             ->end()
         ;
         // @formatter:on
