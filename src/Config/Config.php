@@ -44,6 +44,13 @@ class Config extends BaseConfig
         return $val;
     }
 
+    public function skipRegionValidation(): bool
+    {
+        /** @var bool $val */
+        $val = $this->getValue(['parameters', 'skipRegionValidation'], false);
+        return $val;
+    }
+
     public function isUserDefinedCredentials(): bool
     {
         $storageBackendType = $this->getValue(['parameters', 'storageBackendType'], '');

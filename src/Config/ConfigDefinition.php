@@ -97,6 +97,7 @@ class ConfigDefinition extends BaseConfigDefinition
                 ->scalarNode('backupPath')->end()
                 ->booleanNode('exportStructureOnly')->end()
                 ->booleanNode('includeVersions')->end()
+                ->booleanNode('skipRegionValidation')->defaultFalse()->end()
                 ->scalarNode('storageBackendType')->end()
                 ->scalarNode('accountName')->end()
                 ->scalarNode('#accountKey')->end()
@@ -105,7 +106,6 @@ class ConfigDefinition extends BaseConfigDefinition
                 ->scalarNode('#secret_access_key')->end()
                 ->scalarNode('#bucket')->end()
                 ->scalarNode('#jsonKey')->end()
-                ->scalarNode('region')->end()
             ->end()
         ;
         // @formatter:on

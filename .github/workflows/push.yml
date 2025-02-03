@@ -59,8 +59,8 @@ jobs:
           TAG="${GITHUB_REF##*/}"
           IS_SEMANTIC_TAG=$(echo "$TAG" | grep -q '^v\?[0-9]\+\.[0-9]\+\.[0-9]\+$' && echo true || echo false)
           echo "Tag = '$TAG', is semantic tag = '$IS_SEMANTIC_TAG'"
-          echo "::set-output name=app_image_tag::$TAG"
-          echo "::set-output name=is_semantic_tag::$IS_SEMANTIC_TAG"
+          echo "app_image_tag=$TAG" >> $GITHUB_OUTPUT
+          echo "is_semantic_tag=$IS_SEMANTIC_TAG" >> $GITHUB_OUTPUT
       -
         name: Push image to ECR
         uses: keboola/action-push-to-ecr@master
