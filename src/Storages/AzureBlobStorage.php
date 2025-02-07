@@ -41,7 +41,14 @@ class AzureBlobStorage implements IStorage
             $this->config->getAccountKey(),
         );
         $client = ClientFactory::createClientFromConnectionString($connectionString);
-        $client->createContainer($path);
+        try {
+            $client->getContainerMetadata($path);
+        } catch (ServiceException $e) {
+            if ($e->getCode() !== 404) {
+                throw $e;
+            }
+            $client->createContainer($path);
+        }
 
         $sasHelper = new BlobSharedAccessSignatureHelper(
             $this->config->getAccountName(),
