@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "86e077fd309e46d69fb90b93c575747a",
+    "content-hash": "8f5fce33aa4697a0662eab625b9fdce2",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1329,22 +1329,23 @@
         },
         {
             "name": "keboola/kbc-project-backup",
-            "version": "1.15.0",
+            "version": "1.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/php-kbc-project-backup.git",
-                "reference": "28070194cdaf0a54112144c311d35ab3e8dedbe9"
+                "reference": "4b53168922d7d2b7196c58ca3fc1b9fa782455d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/php-kbc-project-backup/zipball/28070194cdaf0a54112144c311d35ab3e8dedbe9",
-                "reference": "28070194cdaf0a54112144c311d35ab3e8dedbe9",
+                "url": "https://api.github.com/repos/keboola/php-kbc-project-backup/zipball/4b53168922d7d2b7196c58ca3fc1b9fa782455d4",
+                "reference": "4b53168922d7d2b7196c58ca3fc1b9fa782455d4",
                 "shasum": ""
             },
             "require": {
                 "keboola/notification-api-php-client": "^3.0",
                 "keboola/php-file-storage-utils": "^0.2.6",
                 "keboola/php-temp": "^2.0",
+                "keboola/retry": "^0.5.1",
                 "keboola/storage-api-client": "^15.2",
                 "microsoft/azure-storage-blob": "^1.5",
                 "monolog/monolog": "^2.3",
@@ -1384,9 +1385,9 @@
             "description": "Backup KBC project",
             "support": {
                 "issues": "https://github.com/keboola/php-kbc-project-backup/issues",
-                "source": "https://github.com/keboola/php-kbc-project-backup/tree/1.15.0"
+                "source": "https://github.com/keboola/php-kbc-project-backup/tree/1.16.0"
             },
-            "time": "2025-02-25T21:47:24+00:00"
+            "time": "2025-02-27T09:43:49+00:00"
         },
         {
             "name": "keboola/notification-api-php-client",
@@ -1666,6 +1667,61 @@
                 "source": "https://github.com/keboola/php-temp/tree/2.0.1"
             },
             "time": "2019-04-26T07:18:24+00:00"
+        },
+        {
+            "name": "keboola/retry",
+            "version": "0.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/keboola/retry.git",
+                "reference": "e2ce6f343db1167350df2850a4532ad6845a635d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/keboola/retry/zipball/e2ce6f343db1167350df2850a4532ad6845a635d",
+                "reference": "e2ce6f343db1167350df2850a4532ad6845a635d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1",
+                "psr/log": "^1.1|^2|^3"
+            },
+            "replace": {
+                "vkartaviy/retry": "*"
+            },
+            "require-dev": {
+                "keboola/coding-standard": "^7.0",
+                "phpstan/phpstan-shim": "^0.10",
+                "phpunit/phpunit": "7.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Retry\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Keboola Dev",
+                    "email": "devel@keboola.com"
+                }
+            ],
+            "description": "Library for repeatable and retryable operations",
+            "keywords": [
+                "backoff",
+                "proxy",
+                "repeat",
+                "retry"
+            ],
+            "support": {
+                "issues": "https://github.com/keboola/retry/issues",
+                "source": "https://github.com/keboola/retry/tree/0.5.1"
+            },
+            "time": "2022-09-13T10:26:25+00:00"
         },
         {
             "name": "keboola/storage-api-client",
@@ -6426,12 +6482,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
