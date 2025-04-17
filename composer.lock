@@ -1329,16 +1329,16 @@
         },
         {
             "name": "keboola/kbc-project-backup",
-            "version": "1.18.0",
+            "version": "1.19.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/php-kbc-project-backup.git",
-                "reference": "3648db931905f264d48fca9feeef266fff0c0efa"
+                "reference": "752d9780358b948a9cd45633c91cf886110b28fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/php-kbc-project-backup/zipball/3648db931905f264d48fca9feeef266fff0c0efa",
-                "reference": "3648db931905f264d48fca9feeef266fff0c0efa",
+                "url": "https://api.github.com/repos/keboola/php-kbc-project-backup/zipball/752d9780358b948a9cd45633c91cf886110b28fc",
+                "reference": "752d9780358b948a9cd45633c91cf886110b28fc",
                 "shasum": ""
             },
             "require": {
@@ -1385,9 +1385,9 @@
             "description": "Backup KBC project",
             "support": {
                 "issues": "https://github.com/keboola/php-kbc-project-backup/issues",
-                "source": "https://github.com/keboola/php-kbc-project-backup/tree/1.18.0"
+                "source": "https://github.com/keboola/php-kbc-project-backup/tree/1.19.0"
             },
-            "time": "2025-04-17T06:48:14+00:00"
+            "time": "2025-04-17T11:05:43+00:00"
         },
         {
             "name": "keboola/notification-api-php-client",
@@ -6482,12 +6482,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
