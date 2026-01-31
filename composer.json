@@ -57,9 +57,9 @@
     },
     "extra": {
         "patches": {
-            "microsoft/azure-storage-common": [
-                "patches/microsoft-azure-storage-common-src-common-internal-servicerestproxy-php.patch"
-            ]
+            "microsoft/azure-storage-common": {
+                "Fix NULL parameter deprecation in PHP 8.x for ServiceRestProxy": "patches/microsoft-azure-storage-common-src-common-internal-servicerestproxy-php.patch"
+            }
         }
     }
 }
