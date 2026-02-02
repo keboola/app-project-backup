@@ -11,6 +11,7 @@
         "microsoft/azure-storage-blob": "^1.5"
     },
     "require-dev": {
+        "cweagans/composer-patches": "^1.7",
         "keboola/coding-standard": "^15.0",
         "keboola/datadir-tests": "^5.6",
         "keboola/php-temp": "^2.0",
@@ -50,7 +51,15 @@
         "sort-packages": true,
         "optimize-autoloader": true,
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "cweagans/composer-patches": true
+        }
+    },
+    "extra": {
+        "patches": {
+            "microsoft/azure-storage-common": {
+                "Fix NULL parameter deprecation in PHP 8.x for ServiceRestProxy": "patches/microsoft-azure-storage-common-src-common-internal-servicerestproxy-php.patch"
+            }
         }
     }
 }
