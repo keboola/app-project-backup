@@ -41,7 +41,9 @@ Run by `app-project-migrate` as Phase 1 of the migration pipeline, but can also 
 | Azure Blob Storage | `accountName` + `#accountKey` |
 | GCS | `#jsonKey` (JSON service account) + `#bucket` + `region` (projectId extracted from jsonKey) |
 
-The path in storage is assembled from `backupId` (auto-generated as `data-takeout/<region>/<projectId>/<backupId>/`) or from `backupPath` (custom path).
+The storage path depends on which credentials are used:
+- **Image parameter credentials** (no `storageBackendType` in `parameters`): path is `data-takeout/<region>/<projectId>/<backupId>/`. `backupId` must be provided in `parameters` for the `run` action; in `generate-read-credentials` it is auto-generated if missing.
+- **User-defined credentials** (`storageBackendType` set in `parameters`): path comes from `backupPath`.
 
 ## Sync action: `generate-read-credentials`
 

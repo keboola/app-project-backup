@@ -6,16 +6,17 @@
 |---|---|
 | `storageBackendType` | Cloud storage type: `s3`, `abs`, or `gcs` |
 
-The backup path must be defined in exactly one of two ways:
-- `backupId` – an ID from which the path is assembled automatically
-- `backupPath` – custom full path in storage
+The backup path depends on which credentials are used:
+
+- **Image parameter credentials** (injected by Keboola, no `storageBackendType` in `parameters`): path is auto-assembled as `data-takeout/<region>/<projectId>/<backupId>/`. `backupId` must be provided in `parameters`; in the `generate-read-credentials` action it is auto-generated if missing.
+- **User-defined credentials** (`storageBackendType` present in `parameters`): path comes from `backupPath`.
 
 ## General parameters
 
 | Parameter | Default | Description |
 |---|---|---|
 | `exportStructureOnly` | `false` | If `true`, backs up only metadata (buckets, tables, configurations) without table data |
-| `includeVersions` | not set | If `true`, includes configuration version history |
+| `includeVersions` | `false` | If `true`, includes configuration version history |
 | `skipRegionValidation` | `false` | Skips validation that project region matches storage backend region |
 
 ## S3 credentials
@@ -38,7 +39,7 @@ Used if `storageBackendType: abs`.
 |---|---|---|
 | `accountName` | ✓ | Azure storage account name |
 | `#accountKey` | ✓ | Azure storage key |
-| `backupPath` | ✓ | Backup path (container/path) |
+| `backupPath` | ✓ | Azure container name for the backup. Any `/` characters are replaced with `-` (e.g. `my-container/foo` becomes container `my-container-foo`). Nested prefixes inside a container are not supported. |
 
 ## GCS credentials (Google Cloud Storage)
 

@@ -22,15 +22,20 @@ Component.php
 
 ## Backup path
 
-If no custom credentials are defined (no `backupPath`), the path is auto-generated:
+Path selection is based on whether `parameters.storageBackendType` is set in the input config (`Config::isUserDefinedCredentials()`):
+
+- **User-defined credentials** (`storageBackendType` in `parameters`): `Application::run()` calls `Config::getPath()`, which returns `backupPath`.
+- **Image parameter credentials** (no `storageBackendType` in `parameters`): path is auto-generated as:
 
 ```
 data-takeout/<region>/<projectId>/<backupId>/
 ```
 
-- `region` and `projectId` are read from the SAPI `verifyToken()` response
-- `backupId` comes either from the configuration or is generated via `$sapi->generateId()`
-- The region from the token is also validated to match the region from the image parameters (can be disabled via `skipRegionValidation`)
+where `region` and `projectId` come from the SAPI `verifyToken()` response, and `backupId` is taken from `parameters.backupId` (cast to `int`; becomes `0` if not provided).
+
+> Note: `backupId` is auto-generated via `$sapi->generateId()` only in the `generate-read-credentials` action, not in `run`.
+
+The region is validated to match the region from the image parameters (can be disabled via `skipRegionValidation`).
 
 ## How tables are backed up
 
